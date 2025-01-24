@@ -1,0 +1,13 @@
+﻿<Window x:Class="VoxelEngenLauncher.Layouts.WindowTab.LoadingTab"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VoxelEngenLauncher.Layouts.WindowTab"
+        mc:Ignorable="d"
+        Title="LoadingTab" Height="241" Width="479" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None">
+    <Grid>
+        <ProgressBar Height="34" Margin="50,160,50,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="neTb_PlsWait" HorizontalAlignment="Center" Margin="0,57,0,0" TextWrapping="Wrap" Text="Подождите, идет загрузка некоторых ресурсов" VerticalAlignment="Top" Height="82" Width="332" FontSize="20" TextAlignment="Center"/>
+    </Grid>
+</Window>

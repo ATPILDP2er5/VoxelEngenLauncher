@@ -1,0 +1,5 @@
+{
+    "texture": "leaves",
+    "material": "base:grass",
+    "base:durability": 0.7
+}
