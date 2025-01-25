@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="LoadingTab" Height="241" Width="479" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None">
     <Grid>
-        <ProgressBar Height="34" Margin="50,160,50,0" VerticalAlignment="Top"/>
+        <ProgressBar x:Name="nePb_LoadingW"   Height="34" Margin="50,160,50,0" VerticalAlignment="Top"/>
         <TextBlock x:Name="neTb_PlsWait" HorizontalAlignment="Center" Margin="0,57,0,0" TextWrapping="Wrap" Text="Подождите, идет загрузка некоторых ресурсов" VerticalAlignment="Top" Height="82" Width="332" FontSize="20" TextAlignment="Center"/>
     </Grid>
 </Window>

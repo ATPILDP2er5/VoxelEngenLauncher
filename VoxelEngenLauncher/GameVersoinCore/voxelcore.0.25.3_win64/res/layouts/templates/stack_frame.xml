@@ -1,3 +1,0 @@
-<label hover-color="#A0A0FF" interactive="true" onclick="%{callback}" color="%{color}" enabled="%{enabled}">
-    %{location}
-</label>

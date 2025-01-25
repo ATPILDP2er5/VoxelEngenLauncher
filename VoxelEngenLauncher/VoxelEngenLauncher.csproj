@@ -6,16 +6,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resurces\рисунок.xaml.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\config\" />
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\content\" />
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\export\" />
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\worlds\New World\blocksdata\" />
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\worlds\New World\content\" />
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\worlds\New World\data\" />
-    <Folder Include="GameVersoinCore\voxelcore.0.25.3_win64\worlds\New World\inventories\" />
+    <Page Remove="Resurces\Logo.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resurces\рисунок.xaml.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +26,7 @@
 
   <ItemGroup>
     <Resource Include="Resurces\Logo.svg" />
+    <Resource Include="Resurces\Logo.xaml" />
   </ItemGroup>
 
 </Project>

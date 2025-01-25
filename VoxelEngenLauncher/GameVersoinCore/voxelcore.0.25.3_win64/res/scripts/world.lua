@@ -1,3 +1,0 @@
--- use for engine development tests
--- must be empty in release
--- must not be modified by content-packs

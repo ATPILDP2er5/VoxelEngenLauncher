@@ -1,6 +1,12 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using VoxelEngenLauncher;
+using static VoxelEngenLauncher.App;
 
 namespace VoxelEngenLauncher.Layouts.WindowTab
 {
@@ -12,58 +18,103 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         public LoadingTab()
         {
             InitializeComponent();
-            ShareRep();
+            Thread thread = new Thread(() =>
+            {
+                bool result = LoadReleases().GetAwaiter().GetResult();
+                Dispatcher.Invoke(() =>
+                {
+                    // Закрываем окно с результатом
+                    DialogResult = result;
+                    Close();
+                });
+            });
+            thread.Start();
         }
 
-
-        static async Task ShareRep()
+        /// <summary>
+        /// Загружает релизы и возвращает true, если загрузка успешна, иначе false.
+        /// </summary>
+        /// <returns>True при успешной загрузке, иначе false.</returns>
+        private async Task<bool> LoadReleases()
         {
-            string repoOwner = "MihailRis"; // Владелец репозитория
-            string repoName = "VoxelEngine-Cpp"; // Название репозитория
             string apiUrl = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases";
 
             try
             {
-                List<GitHubRelease> releases = await GetReleasesAsync(apiUrl);
+                // Загружаем релизы с прогрессом
+                List<GitHubRelease> releases = await GetReleasesWithProgressAsync(apiUrl);
 
-                Console.WriteLine($"Релизы для репозитория {repoOwner}/{repoName}:");
-                foreach (var release in releases)
+                // Проверяем, если релизы найдены
+                if (releases != null && releases.Count > 0)
                 {
-                    Console.WriteLine($"- Название: {release.Name}");
-                    Console.WriteLine($"  Версия: {release.TagName}");
-                    Console.WriteLine($"  Дата публикации: {release.PublishedAt}");
-                    Console.WriteLine($"  Ссылка: {release.HtmlUrl}");
-                    Console.WriteLine();
+                    foreach (var release in releases)
+                    {
+                        VersionControl.Add(new GitHubRelease
+                        {
+                            Name = release.Name,
+                            HtmlUrl = release.HtmlUrl,
+                            PublishedAt = release.PublishedAt,
+                            TagName = release.TagName
+                        });
+                    }
+
+                    return true; // Успешная загрузка
                 }
+
+                return false; // Релизы отсутствуют
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка: {ex.Message}");
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+
+                return false; // Ошибка загрузки
             }
         }
 
-        static async Task<List<GitHubRelease>> GetReleasesAsync(string url)
+        /// <summary>
+        /// Загружает релизы из GitHub с отображением прогресса.
+        /// </summary>
+        private async Task<List<GitHubRelease>> GetReleasesWithProgressAsync(string url)
         {
             using HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "C# App"); // GitHub требует User-Agent
+            client.DefaultRequestHeaders.Add("User-Agent", "WPF App");
 
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<GitHubRelease>>(jsonResponse, new JsonSerializerOptions
+            var releases = JsonSerializer.Deserialize<List<GitHubRelease>>(jsonResponse, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
-        }
-    }
 
-    public class GitHubRelease
-    {
-        public string Name { get; set; }
-        public string TagName { get; set; }
-        public DateTime? PublishedAt { get; set; }
-        public string HtmlUrl { get; set; }
+            if (releases == null || releases.Count == 0)
+            {
+                return new List<GitHubRelease>();
+            }
+
+            // Обновляем прогресс-бар
+            Dispatcher.Invoke(() =>
+            {
+                nePb_LoadingW.Minimum = 0;
+                nePb_LoadingW.Maximum = releases.Count;
+                nePb_LoadingW.Value = 0;
+            });
+
+            for (int i = 0; i < releases.Count; i++)
+            {
+                // Обновляем прогресс-бар
+                Dispatcher.Invoke(() => nePb_LoadingW.Value = i + 1);
+
+                // Задержка для эмуляции
+                await Task.Delay(200);
+            }
+
+            return releases;
+        }
     }
 }
 
