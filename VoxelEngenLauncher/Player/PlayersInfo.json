@@ -1,0 +1,19 @@
+{
+    "accountPlayer": [
+        {
+            "Login": {
+                "GameName": "DefaultNickName",
+                "HashCode": "NullCode"
+            },
+            "Skin": {
+                "SkinPath": "Player/skin/DefaultSkin.png"
+            },
+            "PlayersWorldСreate": [
+                {
+                    "WorldName": "NewWord",
+                    "WorldPath": "none"
+                }
+            ]
+        }
+    ]
+}

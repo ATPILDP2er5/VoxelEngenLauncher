@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
 using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace VoxelEngenLauncher
 {
@@ -45,7 +46,7 @@ namespace VoxelEngenLauncher
             if (eB_Play.Content.ToString() == "Установить")
             {
                 eB_Play.IsEnabled = false;
-                await DownloadAndExtractRelease(selectedVersion.ZipUrl, versionFolder, fileName);
+                await DownloadAndExtractRelease(selectedVersion.ZipUrl, versionFolder, fileName, nePB_DownloadElement);
                 MessageBox.Show($"Версия {selectedVersion.Name} успешно установлена!");
                 eB_Play.Content = "Играть";
                 eB_Play.IsEnabled = true;
@@ -59,43 +60,100 @@ namespace VoxelEngenLauncher
                     "VoxelCore.exe"
                 );
 
-                await LaunchVoxelCoreAsync(exePath);
-            }
+                await LaunchVoxelCoreAsync(exePath);            }
         }
 
-        private static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName)
+        private static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar progressBar)
         {
-            // Формируем название архива
-
-            
             string tempZipFile = Path.Combine(Path.GetTempPath(), fileName);
 
             try
             {
-                // Скачиваем файл архива
                 using HttpClient client = new HttpClient();
-                using (var responseStream = await client.GetStreamAsync(zipUrl))
-                using (var fileStream = new FileStream(tempZipFile, FileMode.Create, FileAccess.Write, FileShare.None))
+
+                // Запрос на скачивание
+                using var response = await client.GetAsync(zipUrl, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                // Общий размер файла
+                long? totalBytes = response.Content.Headers.ContentLength;
+
+                if (totalBytes.HasValue)
                 {
-                    await responseStream.CopyToAsync(fileStream);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        progressBar.Maximum = totalBytes.Value;
+                        progressBar.Value = 0;
+                    });
                 }
 
-                // Распаковываем архив в целевую папку
+                // Скачивание файла
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
+                using (var fileStream = new FileStream(tempZipFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    long totalRead = 0;
+
+                    while ((bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        await fileStream.WriteAsync(buffer, 0, bytesRead);
+                        totalRead += bytesRead;
+
+                        if (totalBytes.HasValue)
+                        {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                progressBar.Value = totalRead;
+                            });
+                        }
+                    }
+                }
+
+                // Убедитесь, что целевая папка существует
                 if (!Directory.Exists(destinationFolder))
                 {
                     Directory.CreateDirectory(destinationFolder);
                 }
 
-                ZipFile.ExtractToDirectory(tempZipFile, destinationFolder, overwriteFiles: true);
+                // Распаковка архива
+                try
+                {
+                    ZipFile.ExtractToDirectory(tempZipFile, destinationFolder, overwriteFiles: true);
+                }
+                catch (IOException ioEx)
+                {
+                    MessageBox.Show($"Ошибка распаковки: {ioEx.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
-                // Удаляем временный файл
-                File.Delete(tempZipFile);
+                // Удаление временного файла
+                try
+                {
+                    File.Delete(tempZipFile);
+                }
+                catch (IOException ioEx)
+                {
+                    MessageBox.Show($"Не удалось удалить временный файл: {ioEx.Message}", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                // Уведомление об успешной установке
+                MessageBox.Show($"Файл {fileName} успешно загружен и распакован.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при загрузке или распаковке: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            finally
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    progressBar.Value = 0;
+                });
+            }
         }
+
+
 
         private static async Task LaunchVoxelCoreAsync(string exePath)
         {
@@ -132,7 +190,7 @@ namespace VoxelEngenLauncher
                 return;
 
             var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
-            string versionFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore", selectedVersion.Name);
+            string versionFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore", selectedVersion.Name, $"voxelcore.{selectedVersion.Name.Substring(1)}_win64");
 
             eB_Play.Content = Directory.Exists(versionFolder) ? "Играть" : "Установить";
             eB_Play.IsEnabled = true;

@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Remove="Resurces\Logo.xaml" />
+    <None Remove="Player\PlayersInfo.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,8 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Player\PlayersInfo.json" />
     <Resource Include="Resurces\Logo.svg" />
-    <Resource Include="Resurces\Logo.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Player\Skin\" />
   </ItemGroup>
 
 </Project>
