@@ -40,11 +40,20 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         /// <returns>True при успешной загрузке, иначе false.</returns>
         private async Task<bool> LoadReleases()
         {
+            // Загружаем локальные версии (включая форки)
+            LoadLocalVersions();
+
+            // Если локальные версии найдены, они отображаются в интерфейсе
+            if (VersionControl.Count > 0)
+            {
+                return true; // Локальные версии успешно загружены
+            }
+
             string apiUrl = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases";
 
             try
             {
-                // Пытаемся загрузить релизы
+                // Пытаемся загрузить релизы из GitHub
                 List<GitHubRelease> releases = await GetReleasesWithProgressAsync(apiUrl);
 
                 if (releases != null && releases.Count > 0)
@@ -63,7 +72,7 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
                                 Name = release.Name,
                                 HtmlUrl = release.HtmlUrl,
                                 PublishedAt = release.PublishedAt,
-                                TagName = release.TagName
+                                TagName = release.Name.Substring(1)
                             });
                         }
                     }
@@ -75,11 +84,11 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
             }
             catch
             {
-                // В случае ошибки (например, отсутствует интернет), загружаем локальные версии
-                LoadLocalVersions();
-                return VersionControl.Count > 0; // Успешно, если найдены локальные версии
+                // В случае ошибки проверяем только локальные версии
+                return VersionControl.Count > 0;
             }
         }
+
 
         /// <summary>
         /// Проверяет существование файла по URL.
@@ -145,33 +154,45 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         }
 
         /// <summary>
-        /// Загружает локальные версии из папки.
+        /// Загружает локальные версии, включая кастомные форки, из папки GameVersionCore.
         /// </summary>
         private void LoadLocalVersions()
         {
-            string localPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Versions");
+            string localPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
 
             if (!Directory.Exists(localPath))
             {
-                return; // Папка с локальными версиями отсутствует
+                return; // Папка GameVersionCore отсутствует
             }
 
-            string[] files = Directory.GetFiles(localPath, "voxelcore.*_win64.zip");
+            // Обходим все директории внутри GameVersionCore
+            string[] directories = Directory.GetDirectories(localPath);
 
-            foreach (var file in files)
+            foreach (var dir in directories)
             {
-                string fileName = Path.GetFileName(file);
-                string versionTag = fileName.Split('.')[1]; // Извлекаем версию из имени файла
+                // Ищем файлы формата voxelcore.[версия]_win64.zip
+                string[] versionFiles = Directory.GetFiles(dir, "voxelcore.*_win64");
 
-                VersionControl.Add(new GitHubRelease
+                foreach (var file in versionFiles)
                 {
-                    Name = versionTag,
-                    HtmlUrl = file,
-                    PublishedAt = DateTime.Now, // Используем текущую дату для локальных версий
-                    TagName = versionTag
-                });
+                    string fileName = Path.GetFileName(file);
+                    string version = fileName.Remove(1, "voxelcore.".Length);
+                    {
+                        string versionTag = version.Substring(0, fileName.IndexOf('_')); // Извлекаем версию из имени файла
+                        string forkName = new DirectoryInfo(dir).Name; // Имя директории = имя форка
+
+                        VersionControl.Add(new GitHubRelease
+                        {
+                            Name = $"(v{versionTag}) {forkName}",
+                            HtmlUrl = file,
+                            PublishedAt = DateTime.Now, // Используем текущую дату для локальных версий
+                            TagName = versionTag
+                        });
+                    }
+                }
             }
         }
+
     }
 }
 
