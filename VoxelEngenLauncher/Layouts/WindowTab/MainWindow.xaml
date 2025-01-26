@@ -7,21 +7,129 @@
         mc:Ignorable="d"
         xmlns:svg="http://sharpvectors.codeplex.com/svg/"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
-        Title="VLauncher" Height="558" Width="958" MinHeight="555" MinWidth="955" Activated="Window_Activated">
+        Title="VLauncher" Height="558" Width="958" MinHeight="555" MinWidth="955" Activated="Window_Activated" >
     <Grid>
-        <Grid Margin="10,10,0,10" Background="#CA717171" OpacityMask="White" HorizontalAlignment="Left" Width="260" >
+        <Grid Margin="10,10,0,10" Background="#4CF9F7F7" OpacityMask="White" HorizontalAlignment="Left" Width="260" >
             <Button x:Name="eB_Play" IsEnabled="False" Content="Играть" HorizontalAlignment="Center" Margin="0,125,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_Play_Click"/>
-            <Button x:Name ="eB_Redact" Content="Настройки" HorizontalAlignment="Center" Margin="0,172,0,0" VerticalAlignment="Top" Width="240" Height="42"/>
-            <Button x:Name="eB_FolderGame" Content="Папка игры" HorizontalAlignment="Center" Margin="0,219,0,0" VerticalAlignment="Top" Width="240" Height="42"/>
+            <Button x:Name ="eB_Settings" Content="Настройки" HorizontalAlignment="Center" Margin="0,172,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_Settings_Click"/>
+            <Button  x:Name="eB_FolderGame" Content="Папка игры" HorizontalAlignment="Center" Margin="0,219,0,0" VerticalAlignment="Top" Width="240" Height="42"/>
             <Image Source="{svgc:SvgImage Source=/Resurces/Logo.svg}" x:Name="neIB_LogoGame" HorizontalAlignment="Left" Height="70" Margin="10,10,0,0" VerticalAlignment="Top" Width="240"/>
             <ComboBox x:Name="eCB_ControlVershion" SelectionChanged="eCB_ControlVershion_SelectionChanged"  HorizontalAlignment="Center" Margin="0,98,0,0" VerticalAlignment="Top" Width="240"/>
-            <Button x:Name="eB_GeimerProfile" Content="Профиль игрока" HorizontalAlignment="Center" Width="240" Margin="0,266,0,0" Height="42" VerticalAlignment="Top"/>
+            <Button x:Name="eB_GeimerProfile" Content="Профиль игрока" HorizontalAlignment="Center" Width="240" Margin="0,292,0,0" Height="42" VerticalAlignment="Top"/>
             <ProgressBar x:Name="nePB_DownloadElement" HorizontalAlignment="Center" Margin="0,0,0,10" Width="240" Height="15" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="neTB_NickName" HorizontalAlignment="Center" Margin="0,266,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="21" Width="240"/>
         </Grid>
-        <Grid Margin="0,10,24,10" HorizontalAlignment="Right" Width="637"/>
+        <Grid x:Name="MainGrid" Margin="297,10,24,10" >
+            
+        </Grid>
+              
     </Grid>
     <Window.Resources>
+        <Grid x:Key="SettingsGrid">
+            <TabControl>
+                <!-- Вкладка Audio -->
+                <TabItem Header="Audio">
+                    <StackPanel Margin="10">
+                        <CheckBox Content="Enabled" IsChecked="True" />
+                        <Label>Volume Master:</Label>
+                        <TextBox Text="1" />
+                        <Label>Volume Regular:</Label>
+                        <TextBox Text="1" />
+                        <Label>Volume UI:</Label>
+                        <TextBox Text="1" />
+                        <Label>Volume Ambient:</Label>
+                        <TextBox Text="1" />
+                        <Label>Volume Music:</Label>
+                        <TextBox Text="1" />
+                    </StackPanel>
+                </TabItem>
 
+                <!-- Вкладка Display -->
+                <TabItem Header="Display">
+                    <StackPanel Margin="10">
+                        <Label>Width:</Label>
+                        <TextBox Text="1280" />
+                        <Label>Height:</Label>
+                        <TextBox Text="720" />
+                        <Label>Samples:</Label>
+                        <TextBox Text="0" />
+                        <Label>Framerate:</Label>
+                        <TextBox Text="-1" />
+                        <CheckBox Content="Fullscreen" IsChecked="False" />
+                        <CheckBox Content="Limit FPS When Iconified" IsChecked="False" />
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Вкладка Camera -->
+                <TabItem Header="Camera">
+                    <StackPanel Margin="10">
+                        <Label>Sensitivity:</Label>
+                        <TextBox Text="2" />
+                        <Label>Field of View (FOV):</Label>
+                        <TextBox Text="90" />
+                        <CheckBox Content="Enable FOV Effects" IsChecked="True" />
+                        <CheckBox Content="Enable Shaking" IsChecked="True" />
+                        <CheckBox Content="Enable Inertia" IsChecked="True" />
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Вкладка Chunks -->
+                <TabItem Header="Chunks">
+                    <StackPanel Margin="10">
+                        <Label>Load Distance:</Label>
+                        <TextBox Text="22" />
+                        <Label>Load Speed:</Label>
+                        <TextBox Text="4" />
+                        <Label>Padding:</Label>
+                        <TextBox Text="2" />
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Вкладка Graphics -->
+                <TabItem Header="Graphics">
+                    <StackPanel Margin="10">
+                        <Label>Fog Curve:</Label>
+                        <TextBox Text="1" />
+                        <CheckBox Content="Enable Backlight" IsChecked="True" />
+                        <Label>Gamma:</Label>
+                        <TextBox Text="1" />
+                        <CheckBox Content="Enable Frustum Culling" IsChecked="True" />
+                        <Label>Skybox Resolution:</Label>
+                        <TextBox Text="96" />
+                        <Label>Chunk Max Vertices:</Label>
+                        <TextBox Text="200000" />
+                        <Label>Chunk Max Renderers:</Label>
+                        <TextBox Text="6" />
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Вкладка UI -->
+                <TabItem Header="UI">
+                    <StackPanel Margin="10">
+                        <Label>Language:</Label>
+                        <TextBox Text="ru_RU" />
+                        <Label>World Preview Size:</Label>
+                        <TextBox Text="64" />
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Вкладка Debug -->
+                <TabItem Header="Debug">
+                    <StackPanel Margin="10">
+                        <CheckBox Content="Generator Test Mode" IsChecked="False" />
+                        <CheckBox Content="Do Write Lights" IsChecked="True" />
+                    </StackPanel>
+                </TabItem>
+                <!-- Вкладка Расширенные-->
+                <TabItem Header="Расширенные">
+                    
+                </TabItem>
+            </TabControl>
+            <Button x:Name="eB_Save" Content="Save" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
+        </Grid>
     </Window.Resources>
+    <Window.Background>
+        <ImageBrush ImageSource="/Layouts/WindowTab/SecondPlane.jpg"/>
+    </Window.Background>
 </Window>
     

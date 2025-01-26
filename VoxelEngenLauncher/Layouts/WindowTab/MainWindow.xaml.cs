@@ -1,10 +1,11 @@
-﻿using System.IO.Compression;
+﻿using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
-using System.Text.Json;
 using System.Windows;
-using System.Diagnostics;
 using System.Windows.Controls;
+using Tomlyn;
+using Tomlyn.Model;
 
 namespace VoxelEngenLauncher
 {
@@ -60,7 +61,8 @@ namespace VoxelEngenLauncher
                     "VoxelCore.exe"
                 );
 
-                await LaunchVoxelCoreAsync(exePath);            }
+                await LaunchVoxelCoreAsync(exePath);
+            }
         }
 
         private static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar progressBar)
@@ -195,6 +197,161 @@ namespace VoxelEngenLauncher
             eB_Play.Content = Directory.Exists(versionFolder) ? "Играть" : "Установить";
             eB_Play.IsEnabled = true;
         }
+
+        private void eB_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            LoadSettingsIntoGrid(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
+            if (Resources["SettingsGrid"] is Grid settingsGrid)
+            {
+                // Копируем содержимое из SettingsGrid в MainGrid
+                MainGrid.Children.Clear(); // Очищаем MainGrid, если нужно
+                MainGrid.Children.Add(settingsGrid);
+            }
+            else
+            {
+                MessageBox.Show("Ресурс SettingsGrid не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        /// <summary>
+        /// Загружает настройки из settings.toml в элементы интерфейса (Grid).
+        /// </summary>
+        /// <param name="filePath">Путь к файлу settings.toml.</param>
+        private void LoadSettingsIntoGrid(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("Файл settings.toml не найден. Будет создан новый файл.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                File.WriteAllText(filePath, "");
+            }
+
+            try
+            {
+                // Читаем содержимое TOML
+                string tomlContent = File.ReadAllText(filePath);
+                var tomlData = Toml.Parse(tomlContent).ToModel();
+
+                // Получаем Grid из ресурсов
+                if (Resources["SettingsGrid"] is Grid settingsGrid && tomlData is TomlTable table)
+                {
+                    foreach (var child in settingsGrid.Children)
+                    {
+                        if (child is TabControl tabControl)
+                        {
+                            foreach (TabItem tab in tabControl.Items)
+                            {
+                                if (tab.Content is StackPanel stackPanel && table.TryGetValue(tab.Header.ToString().ToLower(), out var section))
+                                {
+                                    var sectionTable = section as TomlTable;
+
+                                    foreach (var element in stackPanel.Children)
+                                    {
+                                        if (element is TextBox textBox)
+                                        {
+                                            string key = GetLabelBefore(textBox, stackPanel);
+                                            if (key != null && sectionTable.TryGetValue(key, out var value))
+                                            {
+                                                textBox.Text = value.ToString();
+                                            }
+                                        }
+                                        else if (element is CheckBox checkBox)
+                                        {
+                                            string key = checkBox.Content.ToString().ToLower().Replace(" ", "-");
+                                            if (sectionTable.TryGetValue(key, out var value))
+                                            {
+                                                checkBox.IsChecked = Convert.ToBoolean(value);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при чтении файла настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Сохраняет настройки из элементов интерфейса в settings.toml.
+        /// </summary>
+        /// <param name="filePath">Путь к файлу settings.toml.</param>
+        private void SaveSettingsFromGrid(string filePath)
+        {
+            var tomlData = new TomlTable();
+
+            if (Resources["SettingsGrid"] is Grid settingsGrid)
+            {
+                foreach (var child in settingsGrid.Children)
+                {
+                    if (child is TabControl tabControl)
+                    {
+                        foreach (TabItem tab in tabControl.Items)
+                        {
+                            if (tab.Content is StackPanel stackPanel)
+                            {
+                                var sectionTable = new TomlTable();
+                                string sectionName = tab.Header.ToString().ToLower();
+
+                                foreach (var element in stackPanel.Children)
+                                {
+                                    if (element is TextBox textBox)
+                                    {
+                                        string key = GetLabelBefore(textBox, stackPanel);
+                                        if (key != null)
+                                        {
+                                            sectionTable[key] = textBox.Text;
+                                        }
+                                    }
+                                    else if (element is CheckBox checkBox)
+                                    {
+                                        string key = checkBox.Content.ToString().ToLower().Replace(" ", "-");
+                                        sectionTable[key] = checkBox.IsChecked ?? false;
+                                    }
+                                }
+
+                                tomlData[sectionName] = sectionTable;
+                            }
+                        }
+                    }
+                }
+            }
+
+            try
+            {
+                // Сохраняем в файл
+                File.WriteAllText(filePath, Toml.FromModel(tomlData));
+                MessageBox.Show("Настройки успешно сохранены.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении файла настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Получает ключ из Label перед TextBox в StackPanel.
+        /// </summary>
+        private static string GetLabelBefore(TextBox textBox, StackPanel stackPanel)
+        {
+            int index = stackPanel.Children.IndexOf(textBox);
+            if (index > 0 && stackPanel.Children[index - 1] is Label label)
+            {
+                return label.Content.ToString().ToLower().Replace(" ", "-");
+            }
+            return null;
+        }
+
+        private void eB_Save_Click(object sender, RoutedEventArgs e)
+        {
+            // Сохраняем настройки в файл
+            SaveSettingsFromGrid(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
+        }
     }
 }
+
 

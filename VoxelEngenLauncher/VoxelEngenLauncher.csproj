@@ -10,7 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Layouts\WindowTab\SecondPlane.jpg" />
     <None Remove="Player\PlayersInfo.json" />
+    <None Remove="Resurces\SecondPlane.jpg" />
+    <None Remove="settings.toml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,11 +25,15 @@
     <PackageReference Include="SharpVectors" Version="1.8.4.2" />
     <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
     <PackageReference Include="Svg" Version="3.4.7" />
+    <PackageReference Include="Tomlyn" Version="0.18.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Layouts\WindowTab\SecondPlane.jpg" />
     <Resource Include="Player\PlayersInfo.json" />
     <Resource Include="Resurces\Logo.svg" />
+    <Resource Include="Resurces\SecondPlane.jpg" />
+    <Resource Include="settings.toml" />
   </ItemGroup>
 
   <ItemGroup>
