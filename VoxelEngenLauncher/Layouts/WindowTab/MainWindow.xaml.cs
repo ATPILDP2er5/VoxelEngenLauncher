@@ -1,23 +1,34 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using Newtonsoft.Json;
 using Tomlyn;
+// Документация по классу Toml: https://github.com/xoofx/Tomlyn
 using Tomlyn.Model;
 
 namespace VoxelEngenLauncher
 {
     public partial class MainWindow : Window
     {
+        // Поля и свойства
+        string lastVersionStart;
         private List<string?> ListVersion = new();
         public static string gameVersionCorePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
+        public static ClassLang[] Languages;
+        // Конструктор
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        // Обработчики событий
         private void Window_Activated(object sender, EventArgs e)
         {
             if (ListVersion.Count == 0) // Чтобы избежать дублирования
@@ -28,7 +39,30 @@ namespace VoxelEngenLauncher
                 }
                 eCB_ControlVershion.ItemsSource = ListVersion;
             }
+            string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
+            var TomlSettings = Toml.Parse(settings).ToModel();
+            lastVersionStart = (String)TomlSettings["version"]!;
+            var JSONLanguages = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\langs.json"));
+            Languages = JsonConvert.DeserializeObject<ClassLang[]>(JSONLanguages);
+            foreach (var item in Languages)
+            {
+                eCB_Language.Items.Add(item.Name);
+            }
         }
+
+
+
+
+        public class ClassLang
+        {
+            [JsonProperty("key")]
+            public string Key { get; set; }
+
+            [JsonProperty("name")]
+            public string Name { get; set; }
+        }
+
+
 
         private async void eB_Play_Click(object sender, RoutedEventArgs e)
         {
@@ -50,14 +84,13 @@ namespace VoxelEngenLauncher
 
                 string versionFolder = Path.Combine(gameVersionCorePath, selectedVersion.Name.Split(' ')[0]);
                 string fileName = $"voxelcore.{selectedVersion.TagName}_win64.zip";
-                string ZipUrl = $"https://github.com/{App.repoOwner}/{App.repoName}/releases/download/{selectedVersion.Name.Split(' ')[0]}/{fileName}";
+                string zipUrl = $"https://github.com/{App.repoOwner}/{App.repoName}/releases/download/{selectedVersion.Name.Split(' ')[0]}/{fileName}";
 
                 eB_Play.IsEnabled = false;
 
                 try
                 {
-                    // Загружаем и распаковываем релиз
-                    await DownloadAndExtractRelease(ZipUrl, versionFolder, fileName, nePB_DownloadElement);
+                    await DownloadAndExtractRelease(zipUrl, versionFolder, fileName, nePB_DownloadElement);
                     MessageBox.Show($"Версия {selectedVersion.Name} успешно установлена!");
                     App.VersionControl[eCB_ControlVershion.SelectedIndex].PathGame = Path.Combine(versionFolder, $"voxelcore.{selectedVersion.TagName}_win64", "VoxelCore.exe");
                     eB_Play.Content = "Играть";
@@ -79,17 +112,16 @@ namespace VoxelEngenLauncher
                     MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 string settingsPath = Path.Combine(Path.GetDirectoryName(selectedVersion.PathGame), "settings.toml");
                 if (File.Exists(settingsPath))
                 {
-                    // Удаляем файл, если он уже существует
                     File.Delete(settingsPath);
                 }
-                string RootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
-                File.Move(RootSettingsPath, settingsPath);
 
-                // Путь до исполняемого файла
-                
+                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
+                File.Move(rootSettingsPath, settingsPath);
+
                 if (!File.Exists(selectedVersion.PathGame))
                 {
                     MessageBox.Show($"Файл VoxelCore.exe не найден: {selectedVersion.PathGame}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -100,7 +132,60 @@ namespace VoxelEngenLauncher
             }
         }
 
+        private void eCB_ControlVershion_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (eCB_ControlVershion.SelectedIndex == -1)
+                return;
 
+            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
+            eB_Play.Content = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame)) ? "Играть" : "Установить";
+            eB_Play.IsEnabled = true;
+            eB_FolderGame.IsEnabled = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame));
+        }
+
+        private void eB_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            LoadSettingsIntoGrid();
+            SettigsGrid.Visibility = Visibility.Visible;
+        }
+
+        private void eB_Save_Click(object sender, RoutedEventArgs e)
+        {
+            SaveSettingsFromGrid();
+        }
+
+        private void eB_FolderGame_Click(object sender, RoutedEventArgs e)
+        {
+            if (eCB_ControlVershion.SelectedIndex == -1)
+            {
+                MessageBox.Show("Пожалуйста, выберите версию игры.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
+            if (File.Exists(selectedVersion.PathGame))
+            {
+                Process.Start("explorer.exe", Path.GetDirectoryName(selectedVersion.PathGame));
+            }
+            else
+            {
+                MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void eB_Close_Click(object sender, RoutedEventArgs e)
+        {
+            SettigsGrid.Visibility = Visibility.Hidden;
+        }
+
+        private void OpenTBI_Click(object sender, RoutedEventArgs e)
+        {
+            Show();
+            WindowState = WindowState.Normal;
+            Activate();
+        }
+
+        // Общие методы
         public static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar progressBar)
         {
             string tempZipFile = Path.Combine(Path.GetTempPath(), fileName);
@@ -191,8 +276,6 @@ namespace VoxelEngenLauncher
             }
         }
 
-
-
         private static async Task LaunchVoxelCoreAsync(string exePath, string settingPath)
         {
             try
@@ -227,168 +310,181 @@ namespace VoxelEngenLauncher
             {
                 MessageBox.Show($"Ошибка при запуске VoxelCore.exe: {ex.Message}");
             }
+
         }
 
-        private void eCB_ControlVershion_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void LoadSettingsIntoGrid()
         {
-            if (eCB_ControlVershion.SelectedIndex == -1)
-                return;
+            // Читаем содержимое settings.toml
+            string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
+            var tomlSettings = Toml.Parse(settings).ToModel();
 
-            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];;
-
-            eB_Play.Content = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame)) ? "Играть" : "Установить";
-            eB_Play.IsEnabled = true;
-            eB_FolderGame.IsEnabled = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame));
-        }
-
-        private void eB_Settings_Click(object sender, RoutedEventArgs e)
-        {
-            LoadSettingsIntoGrid(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
-            if (Resources["SettingsGrid"] is Grid settingsGrid)
+            // Аудио
+            var audio = tomlSettings["audio"] as TomlTable;
+            if (audio != null)
             {
-                // Копируем содержимое из SettingsGrid в MainGrid
-                MainGrid.Children.Clear(); // Очищаем MainGrid, если нужно
-                MainGrid.Children.Add(settingsGrid);
-            }
-            else
-            {
-                MessageBox.Show("Ресурс SettingsGrid не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-
-        /// <summary>
-        /// Загружает настройки из settings.toml в элементы интерфейса (Grid).
-        /// </summary>
-        /// <param name="filePath">Путь к файлу settings.toml.</param>
-        private void LoadSettingsIntoGrid(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                MessageBox.Show("Файл settings.toml не найден. Будет создан новый файл.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                File.WriteAllText(filePath, "");
+                eS_GlobalVolume.Value = Convert.ToDouble(audio["volume-master"]) * 100;
+                eS_RegularVolume.Value = Convert.ToDouble(audio["volume-regular"]) * 100;
+                eS_UIVolume.Value = Convert.ToDouble(audio["volume-ui"]) * 100;
+                eS_AmbientVolume.Value = Convert.ToDouble(audio["volume-ambient"]) * 100;
+                eS_MusicVolume.Value = Convert.ToDouble(audio["volume-music"]) * 100;
             }
 
-            try
+            // Экран
+            var display = tomlSettings["display"] as TomlTable;
+            if (display != null)
             {
-                // Читаем содержимое TOML
-                string tomlContent = File.ReadAllText(filePath);
-                var tomlData = Toml.Parse(tomlContent).ToModel();
+                eETB_WidthWindow.Text = display["width"].ToString();
+                eETB_HeightWindow.Text = display["height"].ToString();
+                eS_FPS_Limit.Value = Convert.ToDouble(display["framerate"]);
+                eCkB_WindowMod.IsChecked = Convert.ToBoolean(display["fullscreen"]);
+                eCkB_MinimFPSLimitet.IsChecked = Convert.ToBoolean(display["limit-fps-iconified"]);
+            }
 
-                // Получаем Grid из ресурсов
-                if (Resources["SettingsGrid"] is Grid settingsGrid && tomlData is TomlTable table)
+            // Камера
+            var camera = tomlSettings["camera"] as TomlTable;
+            if (camera != null)
+            {
+                eS_Sensitiv.Value = Convert.ToDouble(camera["sensitivity"]);
+                eEB_FOV.Text = camera["fov"].ToString();
+                eCkB_EnableFOVEffects.IsChecked = Convert.ToBoolean(camera["fov-effects"]);
+                eCkB_EnableShake.IsChecked = Convert.ToBoolean(camera["shaking"]);
+                eChB_EnableInertia.IsChecked = Convert.ToBoolean(camera["inertia"]);
+            }
+
+            // Чанки
+            var chunks = tomlSettings["chunks"] as TomlTable;
+            if (chunks != null)
+            {
+                eS_DistanceLoad.Value = Convert.ToDouble(chunks["load-distance"]);
+                eS_SpeadLoad.Value = Convert.ToDouble(chunks["load-speed"]);
+            }
+
+            // Графика
+            var graphics = tomlSettings["graphics"] as TomlTable;
+            if (graphics != null)
+            {
+                
+            }
+
+            // UI
+            var ui = tomlSettings["ui"] as TomlTable;
+            if (ui != null)
+            {
+                for( int i = 0; i < Languages.Length; i++ )
                 {
-
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при чтении файла настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        /// <summary>
-        /// Сохраняет настройки из элементов интерфейса в settings.toml.
-        /// </summary>
-        /// <param name="filePath">Путь к файлу settings.toml.</param>
-        private void SaveSettingsFromGrid(string filePath)
-        {
-            var tomlData = new TomlTable();
-
-            if (Resources["SettingsGrid"] is Grid settingsGrid)
-            {
-                foreach (var child in settingsGrid.Children)
-                {
-                    if (child is TabControl tabControl)
+                    if (Languages[i].Key == ui["language"].ToString())
                     {
-                        foreach (TabItem tab in tabControl.Items)
-                        {
-                            if (tab.Content is StackPanel stackPanel)
-                            {
-                                var sectionTable = new TomlTable();
-                                string sectionName = tab.Header.ToString().ToLower();
-
-                                foreach (var element in stackPanel.Children)
-                                {
-                                    if (element is TextBox textBox)
-                                    {
-                                        string key = GetLabelBefore(textBox, stackPanel);
-                                        if (key != null)
-                                        {
-                                            sectionTable[key] = textBox.Text;
-                                        }
-                                    }
-                                    else if (element is CheckBox checkBox)
-                                    {
-                                        string key = checkBox.Content.ToString().ToLower().Replace(" ", "-");
-                                        sectionTable[key] = checkBox.IsChecked ?? false;
-                                    }
-                                }
-
-                                tomlData[sectionName] = sectionTable;
-                            }
-                        }
+                        eCB_Language.SelectedIndex = i;
+                        break;
                     }
                 }
             }
 
+            // Отладка
+            var debug = tomlSettings["debug"] as TomlTable;
+            if (debug != null)
+            {
+                eCkB_TestMod.IsChecked = Convert.ToBoolean(debug["generator-test-mode"]);
+                eCkB_WLights.IsChecked = Convert.ToBoolean(debug["do-write-lights"]);
+            }
+        }
+
+
+        private void SaveSettingsFromGrid()
+        {
+
+            // Создаём объект для хранения настроек
+            var tomlSettings = new TomlTable();
+            //tomlSettings["version"] = lastVersionStart;
+            // Секция Audio
+            var audio = new TomlTable
+            {
+                ["enabled"] = ChB_Enable.IsChecked, // Если есть CheckBox для включения звука, добавьте его проверку
+                ["volume-master"] = eS_GlobalVolume.Value / 100,
+                ["volume-regular"] = eS_RegularVolume.Value / 100,
+                ["volume-ui"] = eS_UIVolume.Value / 100,
+                ["volume-ambient"] = eS_AmbientVolume.Value / 100,
+                ["volume-music"] = eS_MusicVolume.Value / 100
+            };
+            tomlSettings["audio"] = audio;
+
+            // Секция Display
+            var display = new TomlTable
+            {
+                ["width"] = int.TryParse(eETB_WidthWindow.Text, out int width) ? width : 1280,
+                ["height"] = int.TryParse(eETB_HeightWindow.Text, out int height) ? height : 720,
+                ["samples"] = 0, // Если добавите TextBox для "samples", замените на его значение
+                ["framerate"] = (int)eS_FPS_Limit.Value,
+                ["fullscreen"] = eCkB_WindowMod.IsChecked ?? false,
+                ["limit-fps-iconified"] = eCkB_MinimFPSLimitet.IsChecked ?? false
+            };
+            tomlSettings["display"] = display;
+
+            // Секция Camera
+            var camera = new TomlTable
+            {
+                ["sensitivity"] = eS_Sensitiv.Value,
+                ["fov"] = int.TryParse(eEB_FOV.Text, out int fov) ? fov : 90,
+                ["fov-effects"] = eCkB_EnableFOVEffects.IsChecked ?? true,
+                ["shaking"] = eCkB_EnableShake.IsChecked ?? true,
+                ["inertia"] = eChB_EnableInertia.IsChecked ?? true
+            };
+            tomlSettings["camera"] = camera;
+
+            // Секция Chunks
+            var chunks = new TomlTable
+            {
+                ["load-distance"] = (int)eS_DistanceLoad.Value,
+                ["load-speed"] = (int)eS_SpeadLoad.Value,
+                ["padding"] = 2 
+            };
+            tomlSettings["chunks"] = chunks;
+
+            // Секция Graphics
+            var graphics = new TomlTable
+            {
+                ["fog-curve"] = (double)eS_Fog.Value, 
+                ["backlight"] = eChB_EnableBlacklight.IsChecked, 
+                ["gamma"] = (double)eS_Gamma.Value, 
+                ["frustum-culling"] = eCH_EFC.IsChecked, 
+                ["skybox-resolution"] = 96,
+                ["chunk-max-vertices"] = 200000,
+                ["chunk-max-renderers"] = 6 
+            };
+            tomlSettings["graphics"] = graphics;
+
+            // Секция UI
+            var ui = new TomlTable
+            {
+                ["language"] = Languages[eCB_Language.SelectedIndex].Key ?? "ru_RU",
+                ["world-preview-size"] = 64 // Если добавите TextBox для "world-preview-size", замените на его значение
+            };
+            tomlSettings["ui"] = ui;
+
+            // Секция Debug
+            var debug = new TomlTable
+            {
+                ["generator-test-mode"] = eCkB_TestMod.IsChecked ?? false,
+                ["do-write-lights"] = eCkB_WLights.IsChecked ?? true
+            };
+            tomlSettings["debug"] = debug;
+            tomlSettings["version"] = lastVersionStart;
+            // Сохраняем в файл settings.toml
             try
             {
-                // Сохраняем в файл
-                File.WriteAllText(filePath, Toml.FromModel(tomlData));
+                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
+                string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
+                var tomlMain = Toml.FromModel(tomlSettings);
+                File.WriteAllText(settingsPath, tomlMain);
                 MessageBox.Show("Настройки успешно сохранены.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при сохранении файла настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка при сохранении настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        /// <summary>
-        /// Получает ключ из Label перед TextBox в StackPanel.
-        /// </summary>
-        private static string GetLabelBefore(TextBox textBox, StackPanel stackPanel)
-        {
-            int index = stackPanel.Children.IndexOf(textBox);
-            if (index > 0 && stackPanel.Children[index - 1] is Label label)
-            {
-                return label.Content.ToString().ToLower().Replace(" ", "-");
-            }
-            return null;
-        }
 
-        private void eB_Save_Click(object sender, RoutedEventArgs e)
-        {
-            // Сохраняем настройки в файл
-            SaveSettingsFromGrid(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
-        }
-
-        private void eB_FolderGame_Click(object sender, RoutedEventArgs e)
-        {
-            if (eCB_ControlVershion.SelectedIndex == -1)
-            {
-                MessageBox.Show("Пожалуйста, выберите версию игры.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // Получаем выбранную версию из списка
-            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
-
-            if (File.Exists(selectedVersion.PathGame))
-            {
-                Process.Start("explorer.exe", Path.GetDirectoryName(selectedVersion.PathGame));
-            }
-            else
-            {
-                MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void eB_Close_Click(object sender, RoutedEventArgs e)
-        {
-            MainGrid.Children.Clear();
-        }
     }
 }
-
-
