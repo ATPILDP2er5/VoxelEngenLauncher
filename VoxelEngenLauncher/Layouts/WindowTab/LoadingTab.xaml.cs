@@ -114,7 +114,7 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         /// <summary>
         /// Загружает релизы из GitHub с отображением прогресса.
         /// </summary>
-        private async Task<List<GitHubRelease>> GetReleasesWithProgressAsync(string url)
+        public async Task<List<GitHubRelease>> GetReleasesWithProgressAsync(string url)
         {
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "WPF App");

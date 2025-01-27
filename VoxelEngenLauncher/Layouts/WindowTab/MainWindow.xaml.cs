@@ -12,7 +12,7 @@ namespace VoxelEngenLauncher
     public partial class MainWindow : Window
     {
         private List<string?> ListVersion = new();
-
+        public static string gameVersionCorePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
         public MainWindow()
         {
             InitializeComponent();
@@ -44,8 +44,7 @@ namespace VoxelEngenLauncher
             string versionName = selectedVersion.Name;
             string versionTag = selectedVersion.TagName; // Пример: "0.25.3"
 
-            // Путь к директории с версиями
-            string gameVersionCorePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
+           
 
             // Ищем папку, содержащую выбранную версию
             string[] potentialFolders = Directory.GetDirectories(gameVersionCorePath, "*", SearchOption.TopDirectoryOnly);
@@ -100,6 +99,14 @@ namespace VoxelEngenLauncher
                     MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+                string settingsPath = Path.Combine(targetFolder, $"voxelcore.{versionTag}_win64", "settings.toml");
+                if (File.Exists(settingsPath))
+                {
+                    // Удаляем файл, если он уже существует
+                    File.Delete(settingsPath);
+                }
+                string RootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
+                File.Move(RootSettingsPath, settingsPath);
 
                 // Путь до исполняемого файла
                 string exePath = Path.Combine(targetFolder, $"voxelcore.{versionTag}_win64", "VoxelCore.exe");
@@ -110,12 +117,12 @@ namespace VoxelEngenLauncher
                     return;
                 }
 
-                await LaunchVoxelCoreAsync(exePath);
+                await LaunchVoxelCoreAsync(exePath, settingsPath);
             }
         }
 
 
-        private static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar progressBar)
+        public static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar progressBar)
         {
             string tempZipFile = Path.Combine(Path.GetTempPath(), fileName);
 
@@ -207,7 +214,7 @@ namespace VoxelEngenLauncher
 
 
 
-        private static async Task LaunchVoxelCoreAsync(string exePath)
+        private static async Task LaunchVoxelCoreAsync(string exePath, string settingPath)
         {
             try
             {
@@ -229,6 +236,13 @@ namespace VoxelEngenLauncher
 
                 process.Start();
                 await process.WaitForExitAsync();
+                string RootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
+                if (File.Exists(RootSettingsPath))
+                {
+                    // Удаляем файл, если он уже существует
+                    File.Delete(RootSettingsPath);
+                }
+                File.Move(settingPath, RootSettingsPath);
             }
             catch (Exception ex)
             {

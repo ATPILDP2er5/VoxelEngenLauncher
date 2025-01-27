@@ -9,7 +9,7 @@
    id="svg1"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    sodipodi:docname="рисунок.svg"
-   inkscape:export-filename="рисунок.xaml.png"
+   inkscape:export-filename="Icon.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -34,7 +34,7 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2" />
+     inkscape:current-layer="svg1" />
   <defs
      id="defs1">
     <rect
@@ -73,60 +73,25 @@
      inkscape:label="Слой 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(5.9163347,-16.565737)">
+     transform="matrix(1.4040938,0,0,1.4629481,-17.009015,-35.563952)">
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,3.5498008,0)"
+       transform="matrix(0.26458333,0,0,0.26458333,2.2857112,-6.4705888)"
        id="text7"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:346.667px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect7);fill:#194e19;fill-opacity:1"><tspan
          x="53.666016"
          y="372.45762"
-         id="tspan4">V</tspan></text>
+         id="tspan1">V</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:91.7223px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.264583"
-       x="47.922306"
-       y="98.211166"
+       x="48.34367"
+       y="105.08617"
        id="text8"><tspan
          sodipodi:role="line"
          id="tspan8"
          style="fill:#0000ff;stroke-width:0.264583"
-         x="47.922306"
-         y="98.211166">L</tspan></text>
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Слой 2">
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
-       id="rect9"
-       width="128.38446"
-       height="40.822708"
-       x="-5.9163346"
-       y="103.53586"
-       transform="translate(5.9163347,-16.565737)" />
-    <text
-       xml:space="preserve"
-       transform="scale(0.26458333)"
-       id="text9"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32.0000004px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect10);fill:#484537;fill-opacity:1" />
-    <text
-       xml:space="preserve"
-       transform="scale(0.26458333)"
-       id="text10"
-       style="fill:#484537;text-orientation:auto;font-size:53.33333333px;-inkscape-font-specification:'Ubuntu Bold';font-family:Ubuntu;fill-opacity:1;text-align:start;writing-mode:lr-tb;direction:ltr;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;white-space:pre;shape-inside:url(#rect11)" />
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-4.1414343,-6.5079681)"
-       id="text11"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:53.3333px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect12);fill:#00ff00;fill-opacity:1"><tspan
-         x="35.777344"
-         y="411.98093"
-         id="tspan5">VoxelCore
-</tspan><tspan
-         x="35.777344"
-         y="478.64756"
-         id="tspan6">Launcher_</tspan></text>
+         x="48.34367"
+         y="105.08617">L</tspan></text>
   </g>
 </svg>

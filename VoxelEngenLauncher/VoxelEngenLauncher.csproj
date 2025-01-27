@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resurces\рисунок.xaml.ico</ApplicationIcon>
+    <ApplicationIcon>Resurces\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resurces\рисунок.xaml.ico" />
+    <Content Include="Resurces\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Player\Skin\" />
+    <Folder Include="Mods\" />
   </ItemGroup>
 
 </Project>
