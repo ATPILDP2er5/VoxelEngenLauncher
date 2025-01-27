@@ -40,48 +40,28 @@ namespace VoxelEngenLauncher
 
             var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
 
-            // Название версии и тег ядра
-            string versionName = selectedVersion.Name;
-            string versionTag = selectedVersion.TagName; // Пример: "0.25.3"
-
-           
-
-            // Ищем папку, содержащую выбранную версию
-            string[] potentialFolders = Directory.GetDirectories(gameVersionCorePath, "*", SearchOption.TopDirectoryOnly);
-            string targetFolder = null;
-
-            foreach (var folder in potentialFolders)
-            {
-                // Проверяем, содержит ли папка файл voxelcore.[версия]_win64
-                string expectedFilePath = Path.Combine(folder, $"voxelcore.{versionTag}_win64");
-
-                if (Directory.Exists(folder) && File.Exists(Path.Combine(expectedFilePath, "VoxelCore.exe")))
-                {
-                    targetFolder = folder;
-                    break;
-                }
-            }
-
             if (eB_Play.Content.ToString() == "Установить")
             {
-                if (targetFolder != null)
+                if (selectedVersion.PathGame != null)
                 {
                     MessageBox.Show("Выбранная версия уже установлена.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                string versionFolder = Path.Combine(gameVersionCorePath, versionName);
-                string fileName = $"voxelcore.{versionTag}_win64.zip";
-                selectedVersion.ZipUrl = $"https://github.com/{App.repoOwner}/{App.repoName}/releases/download/{selectedVersion.Name}/{fileName}";
+                string versionFolder = Path.Combine(gameVersionCorePath, selectedVersion.Name.Split(' ')[0]);
+                string fileName = $"voxelcore.{selectedVersion.TagName}_win64.zip";
+                string ZipUrl = $"https://github.com/{App.repoOwner}/{App.repoName}/releases/download/{selectedVersion.Name.Split(' ')[0]}/{fileName}";
 
                 eB_Play.IsEnabled = false;
 
                 try
                 {
                     // Загружаем и распаковываем релиз
-                    await DownloadAndExtractRelease(selectedVersion.ZipUrl, versionFolder, fileName, nePB_DownloadElement);
+                    await DownloadAndExtractRelease(ZipUrl, versionFolder, fileName, nePB_DownloadElement);
                     MessageBox.Show($"Версия {selectedVersion.Name} успешно установлена!");
+                    App.VersionControl[eCB_ControlVershion.SelectedIndex].PathGame = Path.Combine(versionFolder, $"voxelcore.{selectedVersion.TagName}_win64", "VoxelCore.exe");
                     eB_Play.Content = "Играть";
+                    eB_FolderGame.IsEnabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -94,12 +74,12 @@ namespace VoxelEngenLauncher
             }
             else if (eB_Play.Content.ToString() == "Играть")
             {
-                if (targetFolder == null)
+                if (selectedVersion.PathGame == null)
                 {
                     MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                string settingsPath = Path.Combine(targetFolder, $"voxelcore.{versionTag}_win64", "settings.toml");
+                string settingsPath = Path.Combine(Path.GetDirectoryName(selectedVersion.PathGame), "settings.toml");
                 if (File.Exists(settingsPath))
                 {
                     // Удаляем файл, если он уже существует
@@ -109,15 +89,14 @@ namespace VoxelEngenLauncher
                 File.Move(RootSettingsPath, settingsPath);
 
                 // Путь до исполняемого файла
-                string exePath = Path.Combine(targetFolder, $"voxelcore.{versionTag}_win64", "VoxelCore.exe");
-
-                if (!File.Exists(exePath))
+                
+                if (!File.Exists(selectedVersion.PathGame))
                 {
-                    MessageBox.Show($"Файл VoxelCore.exe не найден: {exePath}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"Файл VoxelCore.exe не найден: {selectedVersion.PathGame}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                await LaunchVoxelCoreAsync(exePath, settingsPath);
+                await LaunchVoxelCoreAsync(selectedVersion.PathGame, settingsPath);
             }
         }
 
@@ -255,11 +234,11 @@ namespace VoxelEngenLauncher
             if (eCB_ControlVershion.SelectedIndex == -1)
                 return;
 
-            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
-            string versionFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore", selectedVersion.Name.Split(' ')[0], $"voxelcore.{selectedVersion.TagName}_win64");
+            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];;
 
-            eB_Play.Content = Directory.Exists(versionFolder) ? "Играть" : "Установить";
+            eB_Play.Content = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame)) ? "Играть" : "Установить";
             eB_Play.IsEnabled = true;
+            eB_FolderGame.IsEnabled = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame));
         }
 
         private void eB_Settings_Click(object sender, RoutedEventArgs e)
@@ -299,39 +278,7 @@ namespace VoxelEngenLauncher
                 // Получаем Grid из ресурсов
                 if (Resources["SettingsGrid"] is Grid settingsGrid && tomlData is TomlTable table)
                 {
-                    foreach (var child in settingsGrid.Children)
-                    {
-                        if (child is TabControl tabControl)
-                        {
-                            foreach (TabItem tab in tabControl.Items)
-                            {
-                                if (tab.Content is StackPanel stackPanel && table.TryGetValue(tab.Header.ToString().ToLower(), out var section))
-                                {
-                                    var sectionTable = section as TomlTable;
 
-                                    foreach (var element in stackPanel.Children)
-                                    {
-                                        if (element is TextBox textBox)
-                                        {
-                                            string key = GetLabelBefore(textBox, stackPanel);
-                                            if (key != null && sectionTable.TryGetValue(key, out var value))
-                                            {
-                                                textBox.Text = value.ToString();
-                                            }
-                                        }
-                                        else if (element is CheckBox checkBox)
-                                        {
-                                            string key = checkBox.Content.ToString().ToLower().Replace(" ", "-");
-                                            if (sectionTable.TryGetValue(key, out var value))
-                                            {
-                                                checkBox.IsChecked = Convert.ToBoolean(value);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
             catch (Exception ex)
@@ -427,32 +374,9 @@ namespace VoxelEngenLauncher
             // Получаем выбранную версию из списка
             var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
 
-            // Извлекаем название версии (возможно с кастомным именем форка)
-            string versionName = selectedVersion.Name;
-            string versionTag = selectedVersion.TagName; // Версия ядра (например, "0.25.3")
-
-            // Папка с версиями игры
-            string gameVersionCorePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
-
-            // Ищем папку, содержащую выбранную версию
-            string[] potentialFolders = Directory.GetDirectories(gameVersionCorePath, "*", SearchOption.TopDirectoryOnly);
-            string targetFolder = null;
-
-            foreach (var folder in potentialFolders)
+            if (File.Exists(selectedVersion.PathGame))
             {
-                // Проверяем, содержит ли папка нужный файл voxelcore.[версия]_win64
-                string expectedFilePath = Path.Combine(folder, $"voxelcore.{versionTag}_win64");
-
-                if (File.Exists(Path.Combine(expectedFilePath, "VoxelCore.exe")))
-                {
-                    targetFolder = folder;
-                    break;
-                }
-            }
-
-            if (targetFolder != null)
-            {
-                Process.Start("explorer.exe", targetFolder);
+                Process.Start("explorer.exe", Path.GetDirectoryName(selectedVersion.PathGame));
             }
             else
             {

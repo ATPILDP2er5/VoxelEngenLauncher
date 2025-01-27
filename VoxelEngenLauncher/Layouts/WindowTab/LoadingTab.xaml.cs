@@ -138,28 +138,35 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
                 foreach (string SubPath in Directory.GetDirectories(directories[i]))
                 {                    
                     Regex regex = new Regex(@$"voxelcore.{subRegex}_win64");
-                    if(!VersionControl.Any(c => c.TagName == Version.Substring(1)))
+                    string PathGame = Path.Combine(SubPath, "VoxelCore.exe");
+                    if (regex.IsMatch(SubPath)&&!VersionControl.Any(c => c.TagName == Version.Substring(1)))
                     {
-                        if (regex.IsMatch(SubPath))
+                        VersionControl.Add(new GitHubRelease
                         {
-                            VersionControl.Add(new GitHubRelease
-                            {
-                                Name = $"{Version} (ORIG)",
-                                PublishedAt = Directory.GetCreationTime(SubPath),
-                                TagName = Version
-                            });
-                            break;
-                        }
-                        else if (File.Exists(Path.Combine(SubPath, "VoxelCore.exe")))
-                        {
-                            VersionControl.Add(new GitHubRelease
-                            {
-                                Name = $"{Path.GetFileName(SubPath)}",
-                                PublishedAt = Directory.GetCreationTime(SubPath),
-                                TagName = Version
-                            });
-                        }
+                            Name = $"{Version} (ORIG)",
+                            PublishedAt = Directory.GetCreationTime(SubPath),
+                            TagName = Version,
+                            PathGame = PathGame
+                        });
+                        break;
                     }
+                    else if (VersionControl.Any(c => c.TagName == Version.Substring(1)))
+                    {
+                        // Переменная c используется внутри фильтра, но нам нужно получить объект
+                        VersionControl.FirstOrDefault(c => c.TagName == Version.Substring(1)).PathGame = PathGame;
+                    }
+
+                    else if (File.Exists(PathGame))
+                    {
+                        VersionControl.Add(new GitHubRelease
+                        {
+                            Name = $"{Path.GetFileName(SubPath)}",
+                            PublishedAt = Directory.GetCreationTime(SubPath),
+                            TagName = Version,
+                            PathGame = PathGame
+                        });
+                    }
+               
                 }
 
                 // Обновляем прогресс-бар

@@ -37,7 +37,7 @@ namespace VoxelEngenLauncher
             public string? Name { get; set; }
             public string? TagName { get; set; }
             public DateTime? PublishedAt { get; set; }
-            public string ZipUrl { get; set; } // Ссылка на ZIP-архив
+            public string? PathGame { get; set; }
         }
     }
 
