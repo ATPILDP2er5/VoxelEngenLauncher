@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,22 +14,20 @@ using static VoxelEngenLauncher.App;
 
 namespace VoxelEngenLauncher.Layouts.WindowTab
 {
-    /// <summary>
-    /// Логика взаимодействия для LoadingTab.xaml
-    /// </summary>
     public partial class LoadingTab : Window
     {
         public LoadingTab()
         {
             InitializeComponent();
+            nePb_LoadingW.Minimum = 0;
+
             Thread thread = new Thread(() =>
             {
                 GetAccounts.GetAccoutsFromLocal();
                 bool result = LoadReleases().GetAwaiter().GetResult();
                 Dispatcher.Invoke(() =>
                 {
-                    // Закрываем окно с результатом
-                    DialogResult = result;
+                    DialogResult = result; // Закрываем окно с результатом
                     Close();
                 });
             });
@@ -37,23 +37,24 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         /// <summary>
         /// Загружает релизы и возвращает true, если загрузка успешна, иначе false.
         /// </summary>
-        /// <returns>True при успешной загрузке, иначе false.</returns>
         private async Task<bool> LoadReleases()
         {
-            // Загружаем локальные версии (включая форки)
-            LoadLocalVersions();
-
-            // Если локальные версии найдены, они отображаются в интерфейсе
-            if (VersionControl.Count > 0)
-            {
-                return true; // Локальные версии успешно загружены
-            }
-
             string apiUrl = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases";
 
             try
             {
-                // Пытаемся загрузить релизы из GitHub
+                if (!IsInternetAvailable())
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show("Нет подключения к сети, будут представлены только установленные версии",
+                            "Ошибка подключения", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    });
+                    LoadLocalVersions();
+                    return true;
+                }
+
+                // Загружаем релизы из GitHub
                 List<GitHubRelease> releases = await GetReleasesWithProgressAsync(apiUrl);
 
                 if (releases != null && releases.Count > 0)
@@ -69,32 +70,106 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
                         {
                             VersionControl.Add(new GitHubRelease
                             {
-                                Name = release.Name,
-                                HtmlUrl = release.HtmlUrl,
+                                Name = $"{release.Name} (ORIG)",
                                 PublishedAt = release.PublishedAt,
                                 TagName = release.Name.Substring(1)
                             });
                         }
                     }
-
-                    return true; // Успешная загрузка
                 }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"Ошибка при загрузке релизов: {ex.Message}",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+            }
 
-                return false; // Релизы отсутствуют
+            // Загружаем локальные версии
+            LoadLocalVersions();
+            return true;
+        }
+
+        /// <summary>
+        /// Проверяет доступность интернета.
+        /// </summary>
+        private bool IsInternetAvailable()
+        {
+            try
+            {
+                using var ping = new Ping();
+                PingReply reply = ping.Send("www.google.com", 3000);
+                return reply.Status == IPStatus.Success;
             }
             catch
             {
-                // В случае ошибки проверяем только локальные версии
-                return VersionControl.Count > 0;
+                return false;
             }
         }
 
+        /// <summary>
+        /// Загружает локальные версии, включая кастомные форки, из папки GameVersionCore.
+        /// </summary>
+        private void LoadLocalVersions()
+        {
+            Dispatcher.Invoke(() => neTb_PlsWait.Text = "Загрузка локальных версий...");
+            string localPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
+
+            if (!Directory.Exists(localPath))
+            {
+                Directory.CreateDirectory(localPath);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("Локальные версии отсутствуют.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                });
+                return;
+            }
+
+            string[] directories = Directory.GetDirectories(localPath);
+            Dispatcher.Invoke(() => nePb_LoadingW.Maximum = directories.Length);
+
+            for (int i = 0; i < directories.Length; i++)
+            {
+               
+                string Version = Path.GetFileName(directories[i]);
+                string subRegex = Version.Substring(1).Replace(".", @"\.");
+                foreach (string SubPath in Directory.GetDirectories(directories[i]))
+                {                    
+                    Regex regex = new Regex(@$"voxelcore.{subRegex}_win64");
+                    if(!VersionControl.Any(c => c.TagName == Version.Substring(1)))
+                    {
+                        if (regex.IsMatch(SubPath))
+                        {
+                            VersionControl.Add(new GitHubRelease
+                            {
+                                Name = $"{Version} (ORIG)",
+                                PublishedAt = Directory.GetCreationTime(SubPath),
+                                TagName = Version
+                            });
+                            break;
+                        }
+                        else if (File.Exists(Path.Combine(SubPath, "VoxelCore.exe")))
+                        {
+                            VersionControl.Add(new GitHubRelease
+                            {
+                                Name = $"{Path.GetFileName(SubPath)}",
+                                PublishedAt = Directory.GetCreationTime(SubPath),
+                                TagName = Version
+                            });
+                        }
+                    }
+                }
+
+                // Обновляем прогресс-бар
+                Dispatcher.Invoke(() => nePb_LoadingW.Value = i + 1);
+            }
+        }
 
         /// <summary>
         /// Проверяет существование файла по URL.
         /// </summary>
-        /// <param name="fileUrl"></param>
-        /// <returns></returns>
         private async Task<bool> CheckFileExistsAsync(string fileUrl)
         {
             try
@@ -107,7 +182,7 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
             }
             catch
             {
-                return false; // Файл недоступен или произошла ошибка
+                return false;
             }
         }
 
@@ -116,6 +191,7 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         /// </summary>
         public async Task<List<GitHubRelease>> GetReleasesWithProgressAsync(string url)
         {
+            Dispatcher.Invoke(() => neTb_PlsWait.Text = $"Идет проверка релизов с {url}");
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "WPF App");
 
@@ -123,76 +199,11 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
             response.EnsureSuccessStatusCode();
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
-            var releases = JsonSerializer.Deserialize<List<GitHubRelease>>(jsonResponse, new JsonSerializerOptions
+            return JsonSerializer.Deserialize<List<GitHubRelease>>(jsonResponse, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
-
-            if (releases == null || releases.Count == 0)
-            {
-                return new List<GitHubRelease>();
-            }
-
-            // Обновляем прогресс-бар
-            Dispatcher.Invoke(() =>
-            {
-                nePb_LoadingW.Minimum = 0;
-                nePb_LoadingW.Maximum = releases.Count;
-                nePb_LoadingW.Value = 0;
-            });
-
-            for (int i = 0; i < releases.Count; i++)
-            {
-                // Обновляем прогресс-бар
-                Dispatcher.Invoke(() => nePb_LoadingW.Value = i + 1);
-
-                // Задержка для эмуляции
-                await Task.Delay(200);
-            }
-
-            return releases;
+            }) ?? new List<GitHubRelease>();
         }
-
-        /// <summary>
-        /// Загружает локальные версии, включая кастомные форки, из папки GameVersionCore.
-        /// </summary>
-        private void LoadLocalVersions()
-        {
-            string localPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
-
-            if (!Directory.Exists(localPath))
-            {
-                return; // Папка GameVersionCore отсутствует
-            }
-
-            // Обходим все директории внутри GameVersionCore
-            string[] directories = Directory.GetDirectories(localPath);
-
-            foreach (var dir in directories)
-            {
-                // Ищем файлы формата voxelcore.[версия]_win64.zip
-                string[] versionFiles = Directory.GetFiles(dir, "voxelcore.*_win64");
-
-                foreach (var file in versionFiles)
-                {
-                    string fileName = Path.GetFileName(file);
-                    string version = fileName.Remove(1, "voxelcore.".Length);
-                    {
-                        string versionTag = version.Substring(0, fileName.IndexOf('_')); // Извлекаем версию из имени файла
-                        string forkName = new DirectoryInfo(dir).Name; // Имя директории = имя форка
-
-                        VersionControl.Add(new GitHubRelease
-                        {
-                            Name = $"(v{versionTag}) {forkName}",
-                            HtmlUrl = file,
-                            PublishedAt = DateTime.Now, // Используем текущую дату для локальных версий
-                            TagName = versionTag
-                        });
-                    }
-                }
-            }
-        }
-
     }
 }
 

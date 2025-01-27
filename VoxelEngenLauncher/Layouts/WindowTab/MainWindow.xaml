@@ -34,15 +34,15 @@
                     <StackPanel Margin="10">
                         <CheckBox Content="Enabled" IsChecked="True" />
                         <Label>Volume Master:</Label>
-                        <TextBox Text="1" />
+                        <Slider x:Name="eS_GlobalVolume" Minimum="0" Maximum="100"/>
                         <Label>Volume Regular:</Label>
-                        <TextBox Text="1" />
+                        <Slider x:Name="eS_RegularVolume" Minimum="0" Maximum="100"/>
                         <Label>Volume UI:</Label>
-                        <TextBox Text="1" />
+                        <Slider x:Name="eS_UIVolume"/>
                         <Label>Volume Ambient:</Label>
-                        <TextBox Text="1" />
+                        <Slider x:Name="eS_AmbientVolume" Minimum="0" Maximum="100"/>
                         <Label>Volume Music:</Label>
-                        <TextBox Text="1" />
+                        <Slider x:Name="eS_MusicVolume" Minimum="0" Maximum="100"/>
                     </StackPanel>
                 </TabItem>
 
@@ -50,15 +50,15 @@
                 <TabItem Header="Display">
                     <StackPanel Margin="10">
                         <Label>Width:</Label>
-                        <TextBox Text="1280" />
+                        <TextBox x:Name="eETB_WidthWindow" Text="1280" />
                         <Label>Height:</Label>
-                        <TextBox Text="720" />
+                        <TextBox x:Name="eETB_HeightWindow" Text="720" />
                         <Label>Samples:</Label>
                         <TextBox Text="0" />
                         <Label>Framerate:</Label>
-                        <TextBox Text="-1" />
-                        <CheckBox Content="Fullscreen" IsChecked="False" />
-                        <CheckBox Content="Limit FPS When Iconified" IsChecked="False" />
+                        <Slider x:Name="eS_FPS_Limit" Minimum="-1" Maximum="120" />
+                        <CheckBox  x:Name="eCkB_WindowMod" Content="Fullscreen" IsChecked="False" />
+                        <CheckBox  x:Name="eCkB_MinimFPSLimitet" Content="Limit FPS When Iconified" IsChecked="False" />
                     </StackPanel>
                 </TabItem>
 
@@ -66,12 +66,12 @@
                 <TabItem Header="Camera">
                     <StackPanel Margin="10">
                         <Label>Sensitivity:</Label>
-                        <TextBox Text="2" />
+                        <Slider x:Name="eS_Sensitiv" Minimum="0" Maximum="10"/>
                         <Label>Field of View (FOV):</Label>
-                        <TextBox Text="90" />
-                        <CheckBox Content="Enable FOV Effects" IsChecked="True" />
-                        <CheckBox Content="Enable Shaking" IsChecked="True" />
-                        <CheckBox Content="Enable Inertia" IsChecked="True" />
+                        <TextBox x:Name="eEB_FOV" Text="90" />
+                        <CheckBox x:Name="eCkB_EnableFOVEffects" Content="Enable FOV Effects" IsChecked="True" />
+                        <CheckBox x:Name="eCkB_EnableShake" Content="Enable Shaking" IsChecked="True" />
+                        <CheckBox x:Name="eChB_EnableInertia" Content="Enable Inertia" IsChecked="True" />
                     </StackPanel>
                 </TabItem>
 
@@ -79,9 +79,9 @@
                 <TabItem Header="Chunks">
                     <StackPanel Margin="10">
                         <Label>Load Distance:</Label>
-                        <TextBox Text="22" />
+                        <Slider x:Name="eS_DistanceLoad" />
                         <Label>Load Speed:</Label>
-                        <TextBox Text="4" />
+                        <Slider x:Name="eS_SpeadLoad"/>
                         <Label>Padding:</Label>
                         <TextBox Text="2" />
                     </StackPanel>
@@ -109,7 +109,7 @@
                 <TabItem Header="UI">
                     <StackPanel Margin="10">
                         <Label>Language:</Label>
-                        <TextBox Text="ru_RU" />
+                        <ComboBox x:Name="eCB_Language"/>
                         <Label>World Preview Size:</Label>
                         <TextBox Text="64" />
                     </StackPanel>
@@ -118,8 +118,8 @@
                 <!-- Вкладка Debug -->
                 <TabItem Header="Debug">
                     <StackPanel Margin="10">
-                        <CheckBox Content="Generator Test Mode" IsChecked="False" />
-                        <CheckBox Content="Do Write Lights" IsChecked="True" />
+                        <CheckBox x:Name="eCkB_TestMod" Content="Generator Test Mode" IsChecked="False" />
+                        <CheckBox x:Name="eCkB_WLights" Content="Do Write Lights" IsChecked="True" />
                     </StackPanel>
                 </TabItem>
                 <!-- Вкладка Расширенные-->

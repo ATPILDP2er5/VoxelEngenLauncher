@@ -13,7 +13,6 @@
     <None Remove="Layouts\WindowTab\SecondPlane.jpg" />
     <None Remove="Player\PlayersInfo.json" />
     <None Remove="Resurces\SecondPlane.jpg" />
-    <None Remove="settings.toml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +32,6 @@
     <Resource Include="Player\PlayersInfo.json" />
     <Resource Include="Resurces\Logo.svg" />
     <Resource Include="Resurces\SecondPlane.jpg" />
-    <Resource Include="settings.toml" />
   </ItemGroup>
 
   <ItemGroup>

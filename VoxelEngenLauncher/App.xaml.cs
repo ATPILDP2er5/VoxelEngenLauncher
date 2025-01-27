@@ -37,13 +37,7 @@ namespace VoxelEngenLauncher
             public string? Name { get; set; }
             public string? TagName { get; set; }
             public DateTime? PublishedAt { get; set; }
-            public string? HtmlUrl { get; set; }
             public string ZipUrl { get; set; } // Ссылка на ZIP-архив
-            public GitHubAsset[] Assets { get; set; }
-        }
-        public class GitHubAsset
-        {
-            public string BrowserDownloadUrl { get; set; } // Прямая ссылка на файл
         }
     }
 

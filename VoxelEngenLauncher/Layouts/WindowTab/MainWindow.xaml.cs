@@ -256,7 +256,7 @@ namespace VoxelEngenLauncher
                 return;
 
             var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
-            string versionFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore", selectedVersion.Name, $"voxelcore.{selectedVersion.Name.Substring(1)}_win64");
+            string versionFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore", selectedVersion.Name.Split(' ')[0], $"voxelcore.{selectedVersion.TagName}_win64");
 
             eB_Play.Content = Directory.Exists(versionFolder) ? "Играть" : "Установить";
             eB_Play.IsEnabled = true;
