@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using VoxelEngenLauncher;
-using VoxelEngenLauncher.Skripts;
 using static VoxelEngenLauncher.App;
 
 namespace VoxelEngenLauncher.Layouts.WindowTab
@@ -23,7 +22,6 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
 
             Thread thread = new Thread(() =>
             {
-                GetAccounts.GetAccoutsFromLocal();
                 bool result = LoadReleases().GetAwaiter().GetResult();
                 Dispatcher.Invoke(() =>
                 {

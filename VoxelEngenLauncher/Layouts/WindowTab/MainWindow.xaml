@@ -14,14 +14,14 @@
             <Button x:Name="eB_Play" IsEnabled="False" Content="Играть" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="188" Height="42" Click="eB_Play_Click"/>
             <Button x:Name ="eB_Settings" Content="Настройки" HorizontalAlignment="Center" Margin="0,237,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_Settings_Click"/>
             <Button  x:Name="eB_FolderGame" IsEnabled="False" Content="Папка игры" HorizontalAlignment="Center" Margin="0,284,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_FolderGame_Click"/>
-            <Image Source="{svgc:SvgImage Source=/Resurces/Logo.svg}" x:Name="neIB_LogoGame" HorizontalAlignment="Left" Height="70" Margin="10,10,0,0" VerticalAlignment="Top" Width="240"/>
+            <Image Source="{svgc:SvgImage Source=/Resurces/Images/logo.svg}" x:Name="neIB_LogoGame" HorizontalAlignment="Left" Height="70" Margin="33,10,0,0" VerticalAlignment="Top" Width="199"/>
             <ComboBox x:Name="eCB_ControlVershion" SelectionChanged="eCB_ControlVershion_SelectionChanged"  HorizontalAlignment="Center" Margin="0,98,0,0" VerticalAlignment="Top" Width="240"/>
             <Button x:Name="eB_GeimerProfile" Content="Профиль игрока" HorizontalAlignment="Center" Width="240" Margin="0,357,0,0" Height="42" VerticalAlignment="Top"/>
             <ProgressBar x:Name="nePB_DownloadElement" HorizontalAlignment="Center" Margin="0,0,0,10" Width="240" Height="15" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="neTB_NickName" HorizontalAlignment="Center" Margin="0,331,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="21" Width="240"/>
             <Button x:Name ="eB_AddForkG" Content="Создать свою версию" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_Settings_Click"/>
             <Button HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Height="42" Width="47">
-                <Image Source="{svgc:SvgImage Source=/Resurces/trash.svg}"/>
+                <Image Source="{svgc:SvgImage Source=/Resurces/Images/trash.svg}"/>
             </Button>
         </Grid>
         <Grid x:Name="MainGrid" Margin="297,10,24,10" >
@@ -121,7 +121,7 @@
                 <Button x:Name="eB_Close" Click="eB_Close_Click" Content="x" VerticalAlignment="Top" HorizontalAlignment="Right" Width="24"/>
             </Grid>
         </Grid>
-        <tb:TaskbarIcon x:Name="eTBI_Tray" IconSource="/Resurces/Icon.ico" ToolTipText="VLauncher" Visibility="Hidden">
+        <tb:TaskbarIcon x:Name="eTBI_Tray" IconSource="/Resurces/Images/Icon.ico" ToolTipText="VLauncher" Visibility="Hidden">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Open" Click="OpenTBI_Click"/>

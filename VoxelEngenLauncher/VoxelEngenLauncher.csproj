@@ -6,12 +6,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resurces\Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resurces\Images\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Layouts\WindowTab\SecondPlane.jpg" />
-    <None Remove="Player\PlayersInfo.json" />
+    <None Remove="Resurces\Bin\langs.json" />
+    <None Remove="Resurces\Data\appSettings.toml" />
+    <None Remove="Resurces\Images\logo.svg" />
     <None Remove="Resurces\langs.json" />
     <None Remove="Resurces\SecondPlane.jpg" />
     <None Remove="Resurces\trash.svg" />
@@ -19,11 +21,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resurces\Icon.ico">
+    <Content Include="Resurces\Images\logo.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resurces\Data\appSettings.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resurces\Data\user.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resurces\Images\Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="settings.toml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -38,18 +55,16 @@
 
   <ItemGroup>
     <Resource Include="Layouts\WindowTab\SecondPlane.jpg" />
-    <Resource Include="Player\PlayersInfo.json" />
-    <Content Include="Resurces\langs.json">
+    <Content Include="Resurces\Data\langs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resurces\Logo.svg" />
-    <Resource Include="Resurces\SecondPlane.jpg" />
-    <Resource Include="Resurces\trash.svg" />
+    <Resource Include="Resurces\Images\SecondPlane.jpg" />
+    <Resource Include="Resurces\Images\trash.svg" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Player\Skin\" />
     <Folder Include="Mods\" />
+    <Folder Include="Skripts\" />
   </ItemGroup>
 
 </Project>

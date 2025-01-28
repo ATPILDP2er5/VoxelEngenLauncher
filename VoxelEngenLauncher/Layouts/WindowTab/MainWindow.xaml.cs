@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -18,7 +15,7 @@ namespace VoxelEngenLauncher
     public partial class MainWindow : Window
     {
         // Поля и свойства
-        string lastVersionStart;
+        string? lastVersionStart;
         private List<string?> ListVersion = new();
         public static string gameVersionCorePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
         public static ClassLang[] Languages;
@@ -31,23 +28,21 @@ namespace VoxelEngenLauncher
         // Обработчики событий
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (ListVersion.Count == 0) // Чтобы избежать дублирования
+            if (lastVersionStart == null) // Чтобы избежать дублирования
             {
                 foreach (var item in App.VersionControl)
                 {
                     ListVersion.Add(item.Name);
                 }
                 eCB_ControlVershion.ItemsSource = ListVersion;
+                var JSONLanguages = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\langs.json"));
+                Languages = JsonConvert.DeserializeObject<ClassLang[]>(JSONLanguages);
+                foreach (var item in Languages)
+                {
+                    eCB_Language.Items.Add(item.Name);
+                }
             }
-            string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
-            var TomlSettings = Toml.Parse(settings).ToModel();
-            lastVersionStart = (String)TomlSettings["version"]!;
-            var JSONLanguages = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\langs.json"));
-            Languages = JsonConvert.DeserializeObject<ClassLang[]>(JSONLanguages);
-            foreach (var item in Languages)
-            {
-                eCB_Language.Items.Add(item.Name);
-            }
+
         }
 
 
@@ -112,23 +107,32 @@ namespace VoxelEngenLauncher
                     MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-
-                string settingsPath = Path.Combine(Path.GetDirectoryName(selectedVersion.PathGame), "settings.toml");
-                if (File.Exists(settingsPath))
+                int[] Version = selectedVersion.TagName.Split('.').Select(int.Parse).ToArray();
+                int[] LastVersion = lastVersionStart.Split('.').Select(int.Parse).ToArray();
+                if (Comparisons_of_Versions(Version, LastVersion))
                 {
-                    File.Delete(settingsPath);
+                    string settingsPath = Path.Combine(Path.GetDirectoryName(selectedVersion.PathGame), "settings.toml");
+                    if (File.Exists(settingsPath))
+                    {
+                        File.Delete(settingsPath);
+                    }
+
+                    string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
+                    File.Move(rootSettingsPath, settingsPath);
+
+                    if (!File.Exists(selectedVersion.PathGame))
+                    {
+                        MessageBox.Show($"Файл VoxelCore.exe не найден: {selectedVersion.PathGame}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    await LaunchVoxelCoreAsync(selectedVersion.PathGame, settingsPath);
+                }
+                else
+                {
+                    MessageBox.Show("Настройки не будут импортированны, т. к. ВЫ запускаете новую версию", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
 
-                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
-                File.Move(rootSettingsPath, settingsPath);
-
-                if (!File.Exists(selectedVersion.PathGame))
-                {
-                    MessageBox.Show($"Файл VoxelCore.exe не найден: {selectedVersion.PathGame}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                await LaunchVoxelCoreAsync(selectedVersion.PathGame, settingsPath);
             }
         }
 
@@ -364,14 +368,14 @@ namespace VoxelEngenLauncher
             var graphics = tomlSettings["graphics"] as TomlTable;
             if (graphics != null)
             {
-                
+
             }
 
             // UI
             var ui = tomlSettings["ui"] as TomlTable;
             if (ui != null)
             {
-                for( int i = 0; i < Languages.Length; i++ )
+                for (int i = 0; i < Languages.Length; i++)
                 {
                     if (Languages[i].Key == ui["language"].ToString())
                     {
@@ -437,20 +441,20 @@ namespace VoxelEngenLauncher
             {
                 ["load-distance"] = (int)eS_DistanceLoad.Value,
                 ["load-speed"] = (int)eS_SpeadLoad.Value,
-                ["padding"] = 2 
+                ["padding"] = 2
             };
             tomlSettings["chunks"] = chunks;
 
             // Секция Graphics
             var graphics = new TomlTable
             {
-                ["fog-curve"] = (double)eS_Fog.Value, 
-                ["backlight"] = eChB_EnableBlacklight.IsChecked, 
-                ["gamma"] = (double)eS_Gamma.Value, 
-                ["frustum-culling"] = eCH_EFC.IsChecked, 
+                ["fog-curve"] = (double)eS_Fog.Value,
+                ["backlight"] = eChB_EnableBlacklight.IsChecked,
+                ["gamma"] = (double)eS_Gamma.Value,
+                ["frustum-culling"] = eCH_EFC.IsChecked,
                 ["skybox-resolution"] = 96,
                 ["chunk-max-vertices"] = 200000,
-                ["chunk-max-renderers"] = 6 
+                ["chunk-max-renderers"] = 6
             };
             tomlSettings["graphics"] = graphics;
 
@@ -484,7 +488,22 @@ namespace VoxelEngenLauncher
                 MessageBox.Show($"Ошибка при сохранении настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private bool Comparisons_of_Versions(int[] CurrentVersion, int[] LastRunningVersion)
+        {
+            if (CurrentVersion[0] > LastRunningVersion[0])
+            {
+                return false;
+            }
+            else if (CurrentVersion[1] > LastRunningVersion[1])
+            {
+                return false;
 
-
+            }
+            else if (CurrentVersion[2] > LastRunningVersion[2])
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }
