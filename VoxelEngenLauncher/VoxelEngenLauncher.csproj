@@ -12,7 +12,9 @@
   <ItemGroup>
     <None Remove="Layouts\WindowTab\SecondPlane.jpg" />
     <None Remove="Resurces\Bin\langs.json" />
+    <None Remove="Resurces\Data\.DS_ReadOnly.toml" />
     <None Remove="Resurces\Data\appSettings.toml" />
+    <None Remove="Resurces\Data\controlVersionSettings.json" />
     <None Remove="Resurces\Images\logo.svg" />
     <None Remove="Resurces\langs.json" />
     <None Remove="Resurces\SecondPlane.jpg" />
@@ -21,9 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resurces\Data\defaultSettings.toml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resurces\Images\logo.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -61,13 +60,24 @@
     <Content Include="Resurces\Data\langs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Resurces\Data\controlVersionSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Resource Include="Resurces\Data\.DS_ReadOnly.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resurces\Images\SecondPlane.jpg" />
     <Resource Include="Resurces\Images\trash.svg" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Mods\" />
-    <Folder Include="Resurces\Skripts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resurces\Data\GlobalSettingfs.toml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

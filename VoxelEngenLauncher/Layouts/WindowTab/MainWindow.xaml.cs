@@ -9,16 +9,17 @@ using Newtonsoft.Json;
 using Tomlyn;
 // Документация по классу Toml: https://github.com/xoofx/Tomlyn
 using Tomlyn.Model;
+using VoxelEngenLauncher.Resurces.Skripts;
 
 namespace VoxelEngenLauncher
 {
     public partial class MainWindow : Window
     {
         // Поля и свойства
-        string? lastVersionStart;
         private List<string?> ListVersion = new();
         public static string gameVersionCorePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameVersionCore");
         public static ClassLang[] Languages;
+        public static List<Versionsetting> dVersions;
         // Конструктор
         public MainWindow()
         {
@@ -28,7 +29,7 @@ namespace VoxelEngenLauncher
         // Обработчики событий
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (lastVersionStart == null) // Чтобы избежать дублирования
+            if (Languages == null) // Чтобы избежать дублирования
             {
                 foreach (var item in App.VersionControl)
                 {
@@ -45,6 +46,11 @@ namespace VoxelEngenLauncher
 
         }
 
+        public class Versionsetting
+        {
+            public string settings_version { get; set; }
+            public string latest_supported_application { get; set; }
+        }
 
 
 
@@ -107,31 +113,22 @@ namespace VoxelEngenLauncher
                     MessageBox.Show("Выбранная версия игры не найдена на локальном диске.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                int[] Version = selectedVersion.TagName.Split('.').Select(int.Parse).ToArray();
-                int[] LastVersion = lastVersionStart.Split('.').Select(int.Parse).ToArray();
-                if (Comparisons_of_Versions(Version, LastVersion))
+                string settingsPath = Path.Combine(Path.GetDirectoryName(selectedVersion.PathGame), "settings.toml");
+                if (File.Exists(settingsPath))
                 {
-                    string settingsPath = Path.Combine(Path.GetDirectoryName(selectedVersion.PathGame), "settings.toml");
-                    if (File.Exists(settingsPath))
-                    {
-                        File.Delete(settingsPath);
-                    }
-
-                    string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
-                    File.Move(rootSettingsPath, settingsPath);
-
-                    if (!File.Exists(selectedVersion.PathGame))
-                    {
-                        MessageBox.Show($"Файл VoxelCore.exe не найден: {selectedVersion.PathGame}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    await LaunchVoxelCoreAsync(selectedVersion.PathGame, settingsPath);
+                    File.Delete(settingsPath);
                 }
-                else
+
+                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\GlobalSettings.toml");
+                File.Copy(rootSettingsPath, settingsPath);
+
+                if (!File.Exists(selectedVersion.PathGame))
                 {
-                    MessageBox.Show("Настройки не будут импортированны, т. к. ВЫ запускаете новую версию", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"Файл VoxelCore.exe не найден: {selectedVersion.PathGame}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
+
+                await LaunchVoxelCoreAsync(selectedVersion.PathGame, settingsPath);
 
             }
         }
@@ -302,25 +299,18 @@ namespace VoxelEngenLauncher
 
                 process.Start();
                 await process.WaitForExitAsync();
-                string RootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
-                if (File.Exists(RootSettingsPath))
-                {
-                    // Удаляем файл, если он уже существует
-                    File.Delete(RootSettingsPath);
-                }
-                File.Move(settingPath, RootSettingsPath);
+                SettingsManager.UpdateGlobalSettings(settingPath); // Add missing semicolon
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при запуске VoxelCore.exe: {ex.Message}");
             }
-
         }
 
         private void LoadSettingsIntoGrid()
         {
             // Читаем содержимое settings.toml
-            string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
+            string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\GlobalSettings.toml"));
             TomlTable tomlSettings;
             try
             {
@@ -328,10 +318,10 @@ namespace VoxelEngenLauncher
             }
             catch
             {
-               
-                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\defaultSettings.toml");
+
+                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\DS_ReadOnly.toml");
                 tomlSettings = Toml.Parse(rootSettingsPath).ToModel();
-                File.Move(rootSettingsPath, settings);
+                File.Copy(rootSettingsPath, settings);
             }
 
             // Аудио
@@ -484,12 +474,12 @@ namespace VoxelEngenLauncher
                 ["do-write-lights"] = eCkB_WLights.IsChecked ?? true
             };
             tomlSettings["debug"] = debug;
-            tomlSettings["version"] = lastVersionStart;
+
             // Сохраняем в файл settings.toml
             try
             {
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
-                string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml");
+                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\GlobalSettings.toml"));
+                string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\GlobalSettings.toml");
                 var tomlMain = Toml.FromModel(tomlSettings);
                 File.WriteAllText(settingsPath, tomlMain);
                 MessageBox.Show("Настройки успешно сохранены.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -499,22 +489,25 @@ namespace VoxelEngenLauncher
                 MessageBox.Show($"Ошибка при сохранении настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private bool Comparisons_of_Versions(int[] CurrentVersion, int[] LastRunningVersion)
+        private string Comparisons_of_Versions(int[] CurrentVersion)
         {
-            if (CurrentVersion[0] > LastRunningVersion[0])
+            string? SettingsBild = null;
+            int Bild = CurrentVersion[0] * 10000 + CurrentVersion[1] * 100 + CurrentVersion[2];
+            foreach (var version in dVersions)
             {
-                return false;
+                int[] ints = version.settings_version.Split('.').Select(int.Parse).ToArray();
+                int Settings = ints[0] * 10000 + ints[1] * 100 + ints[2];
+                if (Settings >= Bild)
+                {
+                    SettingsBild = version.settings_version;
+                    break;
+                }
             }
-            else if (CurrentVersion[1] > LastRunningVersion[1])
+            if (SettingsBild == null)
             {
-                return false;
-
+                SettingsBild = "unicnow";
             }
-            else if (CurrentVersion[2] > LastRunningVersion[2])
-            {
-                return false;
-            }
-            return true;
+            return SettingsBild;
         }
     }
 }
