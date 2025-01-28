@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resurces\Data\defaultSettings.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resurces\Images\logo.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -40,7 +43,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="settings.toml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -64,7 +67,7 @@
 
   <ItemGroup>
     <Folder Include="Mods\" />
-    <Folder Include="Skripts\" />
+    <Folder Include="Resurces\Skripts\" />
   </ItemGroup>
 
 </Project>

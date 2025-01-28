@@ -321,7 +321,18 @@ namespace VoxelEngenLauncher
         {
             // Читаем содержимое settings.toml
             string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.toml"));
-            var tomlSettings = Toml.Parse(settings).ToModel();
+            TomlTable tomlSettings;
+            try
+            {
+                tomlSettings = Toml.Parse(settings).ToModel();
+            }
+            catch
+            {
+               
+                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\defaultSettings.toml");
+                tomlSettings = Toml.Parse(rootSettingsPath).ToModel();
+                File.Move(rootSettingsPath, settings);
+            }
 
             // Аудио
             var audio = tomlSettings["audio"] as TomlTable;
