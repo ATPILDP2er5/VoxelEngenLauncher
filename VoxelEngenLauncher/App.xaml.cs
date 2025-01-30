@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using VoxelEngenLauncher.Layouts.WindowTab;

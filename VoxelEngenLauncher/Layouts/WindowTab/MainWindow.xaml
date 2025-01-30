@@ -8,7 +8,7 @@
         xmlns:svg="http://sharpvectors.codeplex.com/svg/"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         xmlns:tb="http://www.hardcodet.net/taskbar"
-        Title="VLauncher" Height="558" Width="958" MinHeight="555" MinWidth="955" Activated="Window_Activated" WindowStartupLocation="CenterScreen" >
+        Title="VLauncher" Height="558" Width="958" MinHeight="555" MinWidth="955" Activated="Window_Activated" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <Grid Margin="10,10,0,10" Background="#4CF9F7F7" OpacityMask="White" HorizontalAlignment="Left" Width="260" >
             <Button x:Name="eB_Play" Content="{DynamicResource Play}" Click="eB_Play_Click" Height="42" HorizontalAlignment="Left" IsEnabled="False" Margin="10,190,0,0" VerticalAlignment="Top" Width="188"/>
@@ -32,27 +32,27 @@
                             <CheckBox x:Name="ChB_Enable" Content="Enabled" IsChecked="True" />
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{DynamicResource GlobalVolume}"/>
-                                <TextBlock Text="{Binding Value, ElementName=eS_GlobalVolume, StringFormat=\{0:F0\}}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_GlobalVolume, StringFormat=\{0:P\}}"/>
                             </StackPanel>
                             <Slider x:Name="eS_GlobalVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{DynamicResource RegularVolume}"/>
-                                <TextBlock Text="{Binding Value, ElementName=eS_RegularVolume, StringFormat=\{0:F0\}}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_RegularVolume, StringFormat=\{0:P\}}"/>
                             </StackPanel>
                             <Slider x:Name="eS_RegularVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{DynamicResource UIVolume}"/>
-                                <TextBlock Text="{Binding Value, ElementName=eS_UIVolume, StringFormat=\{0:F0\}}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_UIVolume, StringFormat=\{0:P\}}"/>
                             </StackPanel>
                             <Slider x:Name="eS_UIVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{DynamicResource AmbientVolume}"/>
-                                <TextBlock Text="{Binding Value, ElementName=eS_AmbientVolume, StringFormat=\{0:F0\}}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_AmbientVolume, StringFormat=\{0:P\}}"/>
                             </StackPanel>
                             <Slider x:Name="eS_AmbientVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{DynamicResource MusicVolume}"/>
-                                <TextBlock Text="{Binding Value, ElementName=eS_MusicVolume, StringFormat=\{0:F0\}}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_MusicVolume, StringFormat=\{0:P\}}"/>
                             </StackPanel>
                             <Slider x:Name="eS_MusicVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1" />
                         </StackPanel>
@@ -150,7 +150,10 @@
                     </TabItem>
                     <!-- Вкладка Расширенные-->
                     <TabItem Header="{DynamicResource ExtendedTab}">
-
+                        <StackPanel Margin="10">
+                            <Label Content="{DynamicResource Language}"/>
+                            <ComboBox x:Name="eCB_LanguageApp" SelectionChanged="eCB_Language_SelectionChanged"/>
+                        </StackPanel>
                     </TabItem>
                 </TabControl>
                 <Button x:Name="eB_Save" Content="{DynamicResource Save}" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>

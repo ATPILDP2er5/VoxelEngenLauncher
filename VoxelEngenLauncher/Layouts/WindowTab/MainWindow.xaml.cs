@@ -38,10 +38,29 @@ namespace VoxelEngenLauncher
                 eCB_ControlVershion.ItemsSource = ListVersion;
                 var JSONLanguages = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\langs.json"));
                 Languages = JsonConvert.DeserializeObject<ClassLang[]>(JSONLanguages);
+                List<string> dLang = new();
                 foreach (var item in Languages)
                 {
-                    eCB_Language.Items.Add(item.Name);
+                    dLang.Add(item.Name);
                 }
+                eCB_Language.ItemsSource = dLang;
+                eCB_LanguageApp.ItemsSource = dLang;
+ 
+
+                string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\appSettings.toml"));
+                TomlTable tomlAppSettings;
+                try
+                {
+                    tomlAppSettings = Toml.Parse(settings).ToModel();
+                    var audio = tomlAppSettings["startapp"] as TomlTable;
+                    eCB_LanguageApp.SelectedIndex = GetIndexLang(audio["language"].ToString());
+                }
+                catch
+                {
+                    eCB_LanguageApp.SelectedItem = "English";
+                }
+
+               
             }
 
         }
@@ -61,8 +80,21 @@ namespace VoxelEngenLauncher
 
             [JsonProperty("name")]
             public string Name { get; set; }
-        }
 
+        }
+        public int GetIndexLang(string key)
+        {
+            int index = 0;
+            for (int i = 0; i < Languages.Length; i++)
+            {
+                if (Languages[i].Key == key)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
 
 
         private async void eB_Play_Click(object sender, RoutedEventArgs e)
@@ -406,11 +438,11 @@ namespace VoxelEngenLauncher
             var audio = new TomlTable
             {
                 ["enabled"] = ChB_Enable.IsChecked, // Если есть CheckBox для включения звука, добавьте его проверку
-                ["volume-master"] = eS_GlobalVolume.Value / 100,
-                ["volume-regular"] = eS_RegularVolume.Value / 100,
-                ["volume-ui"] = eS_UIVolume.Value / 100,
-                ["volume-ambient"] = eS_AmbientVolume.Value / 100,
-                ["volume-music"] = eS_MusicVolume.Value / 100
+                ["volume-master"] = eS_GlobalVolume.Value ,
+                ["volume-regular"] = eS_RegularVolume.Value ,
+                ["volume-ui"] = eS_UIVolume.Value ,
+                ["volume-ambient"] = eS_AmbientVolume.Value ,
+                ["volume-music"] = eS_MusicVolume.Value 
             };
             tomlSettings["audio"] = audio;
 
@@ -489,25 +521,51 @@ namespace VoxelEngenLauncher
                 MessageBox.Show($"Ошибка при сохранении настроек: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private string Comparisons_of_Versions(int[] CurrentVersion)
+
+        public void ChangeLanguage(string culture)
         {
-            string? SettingsBild = null;
-            int Bild = CurrentVersion[0] * 10000 + CurrentVersion[1] * 100 + CurrentVersion[2];
-            foreach (var version in dVersions)
-            {
-                int[] ints = version.settings_version.Split('.').Select(int.Parse).ToArray();
-                int Settings = ints[0] * 10000 + ints[1] * 100 + ints[2];
-                if (Settings >= Bild)
-                {
-                    SettingsBild = version.settings_version;
-                    break;
-                }
+            string langFile = $"Resurces/Localization/lang.{culture}.xaml";
+
+            ResourceDictionary newLang = new ResourceDictionary { Source = new Uri(langFile, UriKind.Relative) };
+
+            // Очищаем старую локализацию и загружаем новую
+            Application.Current.Resources.MergedDictionaries.Clear();
+            Application.Current.Resources.MergedDictionaries.Add(newLang);
+            
+        }
+
+        private void eCB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            { 
+                ChangeLanguage(Languages[eCB_LanguageApp.SelectedIndex].Key); 
             }
-            if (SettingsBild == null)
+            catch
             {
-                SettingsBild = "unicnow";
+                ChangeLanguage("en_US");
             }
-            return SettingsBild;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var tomlAppSettings = new TomlTable();
+            tomlAppSettings["startapp"] = new TomlTable
+            {
+                ["language"] = Languages[eCB_LanguageApp.SelectedIndex].Key ?? "en_US"
+            };
+            try
+            {
+                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\appSettings.toml"));
+                string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\appSettings.toml");
+                var tomlMain = Toml.FromModel(tomlAppSettings);
+                File.WriteAllText(settingsPath, tomlMain);
+            }
+            catch
+            {
+                string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\appSettings.toml");
+                var tomlMain = Toml.FromModel(tomlAppSettings);
+                File.WriteAllText(settingsPath, tomlMain);
+            }
         }
     }
 }

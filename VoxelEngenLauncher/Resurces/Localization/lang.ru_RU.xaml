@@ -1,0 +1,83 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:v="clr-namespace:System;assembly=mscorlib">
+    <v:String x:Key="AudioTab">Звук</v:String>
+    <!-- Вкладка Звука -->
+    <v:String x:Key="GlobalVolume">Общая громкость</v:String>
+    <v:String x:Key="RegularVolume">Обычная громкость</v:String>
+    <v:String x:Key="MusicVolume">Громкость музыки</v:String>
+    <v:String x:Key="UIVolume">Громкость интерфейса</v:String>
+    <v:String x:Key="AmbientVolume">Фоновая громкость</v:String>
+    <!-- Вкладка Звука -->
+    <v:String x:Key="DisplayTab">Экран</v:String>
+    <!-- Вкладка Отображения -->
+    <v:String x:Key="WithWindow">Ширина</v:String>
+    <v:String x:Key="HeightWindow">Высота</v:String>
+    <v:String x:Key="FPSLimit">Ограничение FPS</v:String>
+    <v:String x:Key="WindowMod">Полноэкранный режим</v:String>
+    <v:String x:Key="LimitFPSiconified">Ограничить FPS при сворачивании</v:String>
+    <!-- Вкладка Отображения -->
+    <v:String x:Key="CameraTab">Камера</v:String>
+    <!-- Вкладка Камера Игрока -->
+    <v:String x:Key="Sensitiv">Чувствительность</v:String>
+    <v:String x:Key="FOV">Поле зрения</v:String>
+    <v:String x:Key="EnFOVEffects">Включить эффекты FOV</v:String>
+    <v:String x:Key="EnShake">Включить тряску камеры</v:String>
+    <v:String x:Key="EnableInertia">Включить инерцию</v:String>
+    <!-- Вкладка Камера Игрока -->
+    <v:String x:Key="ChunksTab">Чанки</v:String>
+    <!-- Настройки генерации чанков -->
+    <v:String x:Key="LoadDistance">Дальность загрузки чанков</v:String>
+    <v:String x:Key="LoadSpead">Скорость загрузки чанков</v:String>
+    <!-- Настройки генерации чанков -->
+    <v:String x:Key="GraficsTab">Графика</v:String>
+    <!-- Настройки графики -->
+    <v:String x:Key="FOG">Плотность тумана</v:String>
+    <v:String x:Key="EnBlackLight">Включить подсветку</v:String>
+    <v:String x:Key="Gamma">Гамма-коррекция</v:String>
+    <v:String x:Key="EFC">Включить отсечение невидимых объектов</v:String>
+    <!-- Настройки графики -->
+    <v:String x:Key="UITab">Интерфейс</v:String>
+    <!-- Настройки интерфейса -->
+    <v:String x:Key="Language">Язык</v:String>
+    <!-- Настройки интерфейса -->
+    <v:String x:Key="DebugTab">Отладка</v:String>
+    <!-- Настройки для разработчика -->
+    <v:String x:Key="TestMod">Тестовый режим</v:String>
+    <v:String x:Key="do-write-lights">Включить запись освещения</v:String>
+    <!-- Настройки для разработчика -->
+    <v:String x:Key="ExtendedTab">Дополнительные настройки</v:String>
+    <!-- Расширенные настройки -->
+    <v:String x:Key="ControlsTab">Управление</v:String>
+    <!-- Настройки управления -->
+    <!-- Кнопки -->
+    <v:String x:Key="Save">Сохранить</v:String>
+    <v:String x:Key="Play">Играть</v:String>
+    <v:String x:Key="Settings">Настройки</v:String>
+    <v:String x:Key="FolderGame">Открыть папку с игрой</v:String>
+    <v:String x:Key="GeimerProfile">Профиль игрока</v:String>
+    <v:String x:Key="AddForks">Добавить форк</v:String>
+    <!-- Кнопки -->
+</ResourceDictionary>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

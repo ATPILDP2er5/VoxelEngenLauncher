@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resurces\Images\Icon.ico</ApplicationIcon>
     <SignAssembly>False</SignAssembly>
-    <NeutralLanguage>en</NeutralLanguage>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <AssemblyVersion>0.1.0</AssemblyVersion>
     <FileVersion>0.1.0</FileVersion>
+    <ApplicationIcon>Resurces\Images\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <Content Include="Resurces\Data\appSettings.toml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resurces\Data\user.toml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -75,6 +75,7 @@
 
   <ItemGroup>
     <Folder Include="Mods\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
