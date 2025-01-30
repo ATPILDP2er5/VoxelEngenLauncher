@@ -18,7 +18,7 @@
             <ComboBox x:Name="eCB_ControlVershion" HorizontalAlignment="Center" Margin="0,98,0,0" SelectionChanged="eCB_ControlVershion_SelectionChanged" VerticalAlignment="Top" Width="240"/>
             <Button x:Name="eB_GeimerProfile" Content="{DynamicResource GeimerProfile}" Height="42" HorizontalAlignment="Center" Margin="0,357,0,0" VerticalAlignment="Top" Width="240"/>
             <ProgressBar x:Name="nePB_DownloadElement" Height="15" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="240"/>
-            <Button x:Name="eB_AddForkG" Content="{DynamicResource AddForks}" Click="eB_Settings_Click" Height="42" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240"/>
+            <Button x:Name="eB_AddForkG" Content="{DynamicResource AddForks}" Click="eB_AddForkG_Click" Height="42" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240"/>
             <Button Height="42" HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Width="47">
                 <Image Source="{svgc:SvgImage Source=/Resurces/Images/trash.svg}"/>
             </Button>
@@ -82,7 +82,7 @@
                     <!-- Вкладка Camera -->
                     <TabItem Header="{DynamicResource CameraTab}">
                         <StackPanel Margin="10">
-                            
+
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{DynamicResource Sensitiv}"/>
                                 <TextBlock Text="{Binding Value, ElementName=eS_Sensitiv, StringFormat=\{0:F\}}"/>
@@ -159,6 +159,40 @@
                 <Button x:Name="eB_Save" Content="{DynamicResource Save}" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
                 <Button x:Name="eB_Close" Click="eB_Close_Click" Content="x" VerticalAlignment="Top" HorizontalAlignment="Right" Width="24"/>
             </Grid>
+            <!--Visibility="Hidden"-->
+            <Grid x:Name="ModGrid" >
+                <Grid Background="#7FFFFFFF" HorizontalAlignment="Right" Width="226">
+                    <TextBox x:Name="eEB_DirectoryName" Text="custom_version" HorizontalAlignment="Center" Margin="0,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="206"/>
+                    <TextBlock Text="Имя кастомной версии" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                    <TextBlock Text="Версия ядра" HorizontalAlignment="Left" Margin="10,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="eCB_CoreVersionList" Height="21" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Width="206"/>
+                    <Button x:Name="eB_CreatePork" Content="Создать" Height="20" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Width="47"/>
+                    <Button x:Name="eB_Cancel" Content="Отмена" Height="20" HorizontalAlignment="Right" Margin="0,0,62,35" VerticalAlignment="Bottom" Width="47"/>
+                    <ProgressBar x:Name="nePB_Compilate" Height="20" Margin="10,442,10,0" VerticalAlignment="Top"/>
+                    <Grid Background="#806F6868" Margin="10,86,10,80">
+                        <Label Content="Информация о модификации" Margin="0,0,0,347"/>
+                        <TextBlock Text="q" Height="324" Margin="0,29,0,0" VerticalAlignment="Top"/>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="GridListBox">
+                    <ListBox x:Name="ModList" Background="#7FFFFFFF" Margin="0,0,233,0">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Background="#806F6868" Height="60" Tag="{Binding Description}" Width="{Binding ElementName=GridListBox, Path=Whidth}">
+                                    <Image Source="{Binding IconMod}"/>
+                                    <Label Content="{Binding NameMod}" Margin="72,0,-71,30"/>
+                                    <Label Content="{Binding Creator}" Margin="72,30,-71,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Grid>
         </Grid>
         <tb:TaskbarIcon x:Name="eTBI_Tray" IconSource="/Resurces/Images/Icon.ico" ToolTipText="VLauncher" Visibility="Hidden">
             <tb:TaskbarIcon.ContextMenu>
@@ -167,11 +201,9 @@
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
-       
-
     </Grid>
     <Window.Resources>
-        
+
     </Window.Resources>
     <Window.Background>
         <ImageBrush ImageSource="/Layouts/WindowTab/SecondPlane.jpg"/>

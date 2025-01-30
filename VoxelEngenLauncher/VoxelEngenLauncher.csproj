@@ -76,6 +76,9 @@
   <ItemGroup>
     <Folder Include="Mods\" />
     <Folder Include="Properties\" />
+    <Folder Include="Resurces\Data\Temp\coreArchive\" />
+    <Folder Include="Resurces\Data\Temp\modificationsArchive\" />
+    <Folder Include="Resurces\Images\SecondPlane\" />
   </ItemGroup>
 
   <ItemGroup>

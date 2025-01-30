@@ -175,7 +175,7 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
         /// <summary>
         /// Проверяет существование файла по URL.
         /// </summary>
-        private async Task<bool> CheckFileExistsAsync(string fileUrl)
+        public static async Task<bool> CheckFileExistsAsync(string fileUrl)
         {
             try
             {

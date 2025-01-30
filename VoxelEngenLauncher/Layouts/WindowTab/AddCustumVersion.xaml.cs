@@ -41,7 +41,7 @@ namespace VoxelEngenLauncher.Layouts.WindowTab
             string versionFolder = System.IO.Path.Combine(MainWindow.gameVersionCorePath, eEB_DirectoryName.Text);
             string fileName = $"voxelcore.{selectedVersion.Name.Substring(1)}_win64.zip";
             string ZipUrl = $"https://github.com/{App.repoOwner}/{App.repoName}/releases/download/{selectedVersion.Name}/{fileName}";
-            await MainWindow.DownloadAndExtractRelease(ZipUrl, versionFolder, fileName, nePB_Compilate);
+            await MainWindow.DownloadAndExtractRelease(ZipUrl, versionFolder, fileName, nePB_Compilate, null);
             DialogResult = true;
         }
 

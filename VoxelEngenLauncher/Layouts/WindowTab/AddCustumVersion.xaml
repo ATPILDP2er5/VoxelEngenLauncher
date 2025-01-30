@@ -14,11 +14,11 @@
             <ComboBox x:Name="eCB_CoreVersionList" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Width="206" Height="21"/>
             <Button x:Name="eB_CreatePork" Content="Создать" Margin="0,0,10,35" HorizontalAlignment="Right" Width="47" Height="20" VerticalAlignment="Bottom" Click="eB_CreatePork_Click"/>
             <Button x:Name="eB_Cancel" Content="Отмена" Margin="0,0,62,35" HorizontalAlignment="Right" Width="47" Height="20" VerticalAlignment="Bottom" Click="eB_Cancel_Click"/>
-            <Button x:Name="eB_ModsCatalog" Content="Моды" Margin="0,0,113,35" HorizontalAlignment="Right" Width="47" Height="20" VerticalAlignment="Bottom" Click="eB_ModsCatalog_Click"/>
-            <ProgressBar x:Name="nePB_Compilate" Margin="10,0,10,10" Height="10" VerticalAlignment="Bottom"/>
-        </Grid>
-        <Grid Margin="10,10,241,10">
-
+            <ProgressBar x:Name="nePB_Compilate" Margin="10,234,10,0" Height="20" VerticalAlignment="Top"/>
+            <Grid Margin="10,86,10,60" Background="#806F6868">
+                <Label Content="Информация о модификации"/>
+                <TextBlock Text="{Binding Description}"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

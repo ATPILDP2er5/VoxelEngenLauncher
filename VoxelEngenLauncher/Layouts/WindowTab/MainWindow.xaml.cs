@@ -36,6 +36,7 @@ namespace VoxelEngenLauncher
                     ListVersion.Add(item.Name);
                 }
                 eCB_ControlVershion.ItemsSource = ListVersion;
+
                 var JSONLanguages = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\langs.json"));
                 Languages = JsonConvert.DeserializeObject<ClassLang[]>(JSONLanguages);
                 List<string> dLang = new();
@@ -45,7 +46,7 @@ namespace VoxelEngenLauncher
                 }
                 eCB_Language.ItemsSource = dLang;
                 eCB_LanguageApp.ItemsSource = dLang;
- 
+
 
                 string settings = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\appSettings.toml"));
                 TomlTable tomlAppSettings;
@@ -123,7 +124,7 @@ namespace VoxelEngenLauncher
 
                 try
                 {
-                    await DownloadAndExtractRelease(zipUrl, versionFolder, fileName, nePB_DownloadElement);
+                    await DownloadAndExtractRelease(zipUrl, versionFolder, fileName, nePB_DownloadElement, null);
                     MessageBox.Show($"Версия {selectedVersion.Name} успешно установлена!");
                     App.VersionControl[eCB_ControlVershion.SelectedIndex].PathGame = Path.Combine(versionFolder, $"voxelcore.{selectedVersion.TagName}_win64", "VoxelCore.exe");
                     eB_Play.Content = "Играть";
@@ -219,9 +220,18 @@ namespace VoxelEngenLauncher
         }
 
         // Общие методы
-        public static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar progressBar)
+        public static async Task DownloadAndExtractRelease(string zipUrl, string destinationFolder, string fileName, ProgressBar? progressBar, string? pathTemp)
         {
-            string tempZipFile = Path.Combine(Path.GetTempPath(), fileName);
+            // Если передан путь, используем его, иначе сохраняем в стандартную папку
+            string tempDirectory = pathTemp ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Data", "Temp", "coreArchive");
+
+            // Убедимся, что папка для временных файлов существует
+            if (!Directory.Exists(tempDirectory))
+            {
+                Directory.CreateDirectory(tempDirectory);
+            }
+
+            string tempZipFile = Path.Combine(tempDirectory, fileName);
 
             try
             {
@@ -266,7 +276,7 @@ namespace VoxelEngenLauncher
                     }
                 }
 
-                // Убедитесь, что целевая папка существует
+                // Убедимся, что целевая папка существует
                 if (!Directory.Exists(destinationFolder))
                 {
                     Directory.CreateDirectory(destinationFolder);
@@ -294,7 +304,6 @@ namespace VoxelEngenLauncher
                 }
 
                 // Уведомление об успешной установке
-                MessageBox.Show($"Файл {fileName} успешно загружен и распакован.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -308,6 +317,7 @@ namespace VoxelEngenLauncher
                 });
             }
         }
+
 
         private static async Task LaunchVoxelCoreAsync(string exePath, string settingPath)
         {
@@ -566,6 +576,11 @@ namespace VoxelEngenLauncher
                 var tomlMain = Toml.FromModel(tomlAppSettings);
                 File.WriteAllText(settingsPath, tomlMain);
             }
+        }
+
+        private void eB_AddForkG_Click(object sender, RoutedEventArgs e)
+        {
+            ModGrid.Visibility = Visibility.Visible;
         }
     }
 }

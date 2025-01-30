@@ -1,2 +1,5 @@
 ﻿[startapp]
 language = "en_US"
+modificationsArchivePath = null
+coreArchivePath = null
+secondPlane = null
