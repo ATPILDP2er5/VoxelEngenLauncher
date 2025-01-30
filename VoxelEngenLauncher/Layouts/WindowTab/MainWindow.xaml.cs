@@ -319,7 +319,7 @@ namespace VoxelEngenLauncher
             catch
             {
 
-                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\DS_ReadOnly.toml");
+                string rootSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resurces\\Data\\DefaultSettings_ReadOnly.toml");
                 tomlSettings = Toml.Parse(rootSettingsPath).ToModel();
                 File.Copy(rootSettingsPath, settings);
             }
@@ -328,11 +328,11 @@ namespace VoxelEngenLauncher
             var audio = tomlSettings["audio"] as TomlTable;
             if (audio != null)
             {
-                eS_GlobalVolume.Value = Convert.ToDouble(audio["volume-master"]) * 100;
-                eS_RegularVolume.Value = Convert.ToDouble(audio["volume-regular"]) * 100;
-                eS_UIVolume.Value = Convert.ToDouble(audio["volume-ui"]) * 100;
-                eS_AmbientVolume.Value = Convert.ToDouble(audio["volume-ambient"]) * 100;
-                eS_MusicVolume.Value = Convert.ToDouble(audio["volume-music"]) * 100;
+                eS_GlobalVolume.Value = Convert.ToDouble(audio["volume-master"]);
+                eS_RegularVolume.Value = Convert.ToDouble(audio["volume-regular"]);
+                eS_UIVolume.Value = Convert.ToDouble(audio["volume-ui"]);
+                eS_AmbientVolume.Value = Convert.ToDouble(audio["volume-ambient"]);
+                eS_MusicVolume.Value = Convert.ToDouble(audio["volume-music"]);
             }
 
             // Экран
@@ -351,7 +351,7 @@ namespace VoxelEngenLauncher
             if (camera != null)
             {
                 eS_Sensitiv.Value = Convert.ToDouble(camera["sensitivity"]);
-                eEB_FOV.Text = camera["fov"].ToString();
+                eEB_FOV.Value = Convert.ToInt32(camera["fov"].ToString());
                 eCkB_EnableFOVEffects.IsChecked = Convert.ToBoolean(camera["fov-effects"]);
                 eCkB_EnableShake.IsChecked = Convert.ToBoolean(camera["shaking"]);
                 eChB_EnableInertia.IsChecked = Convert.ToBoolean(camera["inertia"]);
@@ -430,7 +430,7 @@ namespace VoxelEngenLauncher
             var camera = new TomlTable
             {
                 ["sensitivity"] = eS_Sensitiv.Value,
-                ["fov"] = int.TryParse(eEB_FOV.Text, out int fov) ? fov : 90,
+                ["fov"] = (int)eEB_FOV.Value,
                 ["fov-effects"] = eCkB_EnableFOVEffects.IsChecked ?? true,
                 ["shaking"] = eCkB_EnableShake.IsChecked ?? true,
                 ["inertia"] = eChB_EnableInertia.IsChecked ?? true

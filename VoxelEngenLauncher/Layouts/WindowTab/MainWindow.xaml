@@ -11,16 +11,15 @@
         Title="VLauncher" Height="558" Width="958" MinHeight="555" MinWidth="955" Activated="Window_Activated" WindowStartupLocation="CenterScreen" >
     <Grid>
         <Grid Margin="10,10,0,10" Background="#4CF9F7F7" OpacityMask="White" HorizontalAlignment="Left" Width="260" >
-            <Button x:Name="eB_Play" IsEnabled="False" Content="Играть" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="188" Height="42" Click="eB_Play_Click"/>
-            <Button x:Name ="eB_Settings" Content="Настройки" HorizontalAlignment="Center" Margin="0,237,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_Settings_Click"/>
-            <Button  x:Name="eB_FolderGame" IsEnabled="False" Content="Папка игры" HorizontalAlignment="Center" Margin="0,284,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_FolderGame_Click"/>
-            <Image Source="{svgc:SvgImage Source=/Resurces/Images/logo.svg}" x:Name="neIB_LogoGame" HorizontalAlignment="Left" Height="70" Margin="33,10,0,0" VerticalAlignment="Top" Width="199"/>
-            <ComboBox x:Name="eCB_ControlVershion" SelectionChanged="eCB_ControlVershion_SelectionChanged"  HorizontalAlignment="Center" Margin="0,98,0,0" VerticalAlignment="Top" Width="240"/>
-            <Button x:Name="eB_GeimerProfile" Content="Профиль игрока" HorizontalAlignment="Center" Width="240" Margin="0,357,0,0" Height="42" VerticalAlignment="Top"/>
-            <ProgressBar x:Name="nePB_DownloadElement" HorizontalAlignment="Center" Margin="0,0,0,10" Width="240" Height="15" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="neTB_NickName" HorizontalAlignment="Center" Margin="0,331,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="21" Width="240"/>
-            <Button x:Name ="eB_AddForkG" Content="Создать свою версию" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240" Height="42" Click="eB_Settings_Click"/>
-            <Button HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Height="42" Width="47">
+            <Button x:Name="eB_Play" Content="{DynamicResource Play}" Click="eB_Play_Click" Height="42" HorizontalAlignment="Left" IsEnabled="False" Margin="10,190,0,0" VerticalAlignment="Top" Width="188"/>
+            <Button x:Name="eB_Settings" Content="{DynamicResource Settings}" Click="eB_Settings_Click" Height="42" HorizontalAlignment="Center" Margin="0,237,0,0" VerticalAlignment="Top" Width="240"/>
+            <Button x:Name="eB_FolderGame" Content="{DynamicResource FolderGame}" Click="eB_FolderGame_Click" Height="42" HorizontalAlignment="Center" IsEnabled="False" Margin="0,284,0,0" VerticalAlignment="Top" Width="240"/>
+            <Image x:Name="neIB_LogoGame" Height="70" HorizontalAlignment="Left" Margin="33,10,0,0" Source="{svgc:SvgImage Source=/Resurces/Images/logo.svg}" VerticalAlignment="Top" Width="199"/>
+            <ComboBox x:Name="eCB_ControlVershion" HorizontalAlignment="Center" Margin="0,98,0,0" SelectionChanged="eCB_ControlVershion_SelectionChanged" VerticalAlignment="Top" Width="240"/>
+            <Button x:Name="eB_GeimerProfile" Content="{DynamicResource GeimerProfile}" Height="42" HorizontalAlignment="Center" Margin="0,357,0,0" VerticalAlignment="Top" Width="240"/>
+            <ProgressBar x:Name="nePB_DownloadElement" Height="15" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="240"/>
+            <Button x:Name="eB_AddForkG" Content="{DynamicResource AddForks}" Click="eB_Settings_Click" Height="42" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240"/>
+            <Button Height="42" HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Width="47">
                 <Image Source="{svgc:SvgImage Source=/Resurces/Images/trash.svg}"/>
             </Button>
         </Grid>
@@ -28,96 +27,133 @@
             <Grid x:Name="SettigsGrid" Visibility="Hidden">
                 <TabControl>
                     <!-- Вкладка Audio -->
-                    <TabItem Header="Audio">
+                    <TabItem Header="{DynamicResource AudioTab}">
                         <StackPanel Margin="10">
                             <CheckBox x:Name="ChB_Enable" Content="Enabled" IsChecked="True" />
-                            <Label>Volume Master:</Label>
-                            <Slider x:Name="eS_GlobalVolume" Minimum="0" Maximum="100"/>
-                            <Label>Volume Regular:</Label>
-                            <Slider x:Name="eS_RegularVolume" Minimum="0" Maximum="100"/>
-                            <Label>Volume UI:</Label>
-                            <Slider x:Name="eS_UIVolume" Minimum="0" Maximum="100"/>
-                            <Label>Volume Ambient:</Label>
-                            <Slider x:Name="eS_AmbientVolume" Minimum="0" Maximum="100"/>
-                            <Label>Volume Music:</Label>
-                            <Slider x:Name="eS_MusicVolume" Minimum="0" Maximum="100"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource GlobalVolume}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_GlobalVolume, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
+                            <Slider x:Name="eS_GlobalVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource RegularVolume}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_RegularVolume, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
+                            <Slider x:Name="eS_RegularVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource UIVolume}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_UIVolume, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
+                            <Slider x:Name="eS_UIVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource AmbientVolume}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_AmbientVolume, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
+                            <Slider x:Name="eS_AmbientVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource MusicVolume}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_MusicVolume, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
+                            <Slider x:Name="eS_MusicVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1" />
                         </StackPanel>
                     </TabItem>
 
                     <!-- Вкладка Display -->
-                    <TabItem Header="Display">
+                    <TabItem Header="{DynamicResource DisplayTab}">
                         <StackPanel Margin="10">
-                            <Label>Width:</Label>
-                            <TextBox x:Name="eETB_WidthWindow" Text="1280" />
-                            <Label>Height:</Label>
-                            <TextBox x:Name="eETB_HeightWindow" Text="720" />
-                            <Label>Samples:</Label>
-                            <TextBox Text="0" />
-                            <Label>Framerate:</Label>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource WithWindow }"/>
+                                <TextBox x:Name="eETB_WidthWindow"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource HeightWindow}"/>
+                                <TextBox x:Name="eETB_HeightWindow"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource FPSLimit}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_FPS_Limit, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
                             <Slider x:Name="eS_FPS_Limit" Minimum="-1" Maximum="120" />
-                            <CheckBox  x:Name="eCkB_WindowMod" Content="Fullscreen" IsChecked="False" />
-                            <CheckBox  x:Name="eCkB_MinimFPSLimitet" Content="Limit FPS When Iconified" IsChecked="False" />
+                            <CheckBox  x:Name="eCkB_WindowMod" Content="{DynamicResource WindowMod}" IsChecked="False" />
+                            <CheckBox  x:Name="eCkB_MinimFPSLimitet" Content="{DynamicResource LimitFPSiconified}" IsChecked="False" />
                         </StackPanel>
                     </TabItem>
 
                     <!-- Вкладка Camera -->
-                    <TabItem Header="Camera">
+                    <TabItem Header="{DynamicResource CameraTab}">
                         <StackPanel Margin="10">
-                            <Label>Sensitivity:</Label>
+                            
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource Sensitiv}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_Sensitiv, StringFormat=\{0:F\}}"/>
+                            </StackPanel>
                             <Slider x:Name="eS_Sensitiv" Minimum="0" Maximum="10"/>
-                            <Label>Field of View (FOV):</Label>
-                            <TextBox x:Name="eEB_FOV" Text="90" />
-                            <CheckBox x:Name="eCkB_EnableFOVEffects" Content="Enable FOV Effects" IsChecked="True" />
-                            <CheckBox x:Name="eCkB_EnableShake" Content="Enable Shaking" IsChecked="True" />
-                            <CheckBox x:Name="eChB_EnableInertia" Content="Enable Inertia" IsChecked="True" />
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource FOV}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eEB_FOV, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
+                            <Slider x:Name="eEB_FOV" Minimum="10" Maximum="120"/>
+                            <CheckBox x:Name="eCkB_EnableFOVEffects" Content="{DynamicResource EnFOVEffects}" IsChecked="True" />
+                            <CheckBox x:Name="eCkB_EnableShake" Content="{DynamicResource EnShake}" IsChecked="True" />
+                            <CheckBox x:Name="eChB_EnableInertia" Content="{DynamicResource EnableInertia}" IsChecked="True" />
                         </StackPanel>
                     </TabItem>
 
                     <!-- Вкладка Chunks -->
-                    <TabItem Header="Chunks">
+                    <TabItem Header="{DynamicResource ChunksTab}">
                         <StackPanel Margin="10">
-                            <Label>Load Distance:</Label>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource LoadDistance}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_DistanceLoad, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
                             <Slider x:Name="eS_DistanceLoad" Minimum="3" Maximum="80"/>
-                            <Label>Load Speed:</Label>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource LoadSpead}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_SpeadLoad, StringFormat=\{0:F0\}}"/>
+                            </StackPanel>
                             <Slider x:Name="eS_SpeadLoad" Minimum="1" Maximum="32"/>
                         </StackPanel>
                     </TabItem>
 
                     <!-- Вкладка Graphics -->
-                    <TabItem Header="Graphics">
+                    <TabItem Header="{DynamicResource GraficsTab}">
                         <StackPanel Margin="10">
-                            <Label>Fog Curve:</Label>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource FOG}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_Fog, StringFormat=\{0:F\}}"/>
+                            </StackPanel>
                             <Slider x:Name="eS_Fog" Minimum="1" Maximum="6"/>
-                            <CheckBox x:Name="eChB_EnableBlacklight" Content="Enable Backlight" IsChecked="True" />
-                            <Label>Gamma:</Label>
+                            <CheckBox x:Name="eChB_EnableBlacklight" Content="{DynamicResource EnBlackLight}" IsChecked="True" />
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{DynamicResource Gamma}"/>
+                                <TextBlock Text="{Binding Value, ElementName=eS_Gamma, StringFormat=\{0:F\}}"/>
+                            </StackPanel>
                             <Slider x:Name="eS_Gamma" Minimum="0.4" Maximum="1"/>
-                            <CheckBox x:Name="eCH_EFC" Content="Enable Frustum Culling" IsChecked="True" />
+                            <CheckBox x:Name="eCH_EFC" Content="{DynamicResource EFC}" IsChecked="True" />
                         </StackPanel>
                     </TabItem>
 
                     <!-- Вкладка UI -->
-                    <TabItem Header="UI">
+                    <TabItem Header="{DynamicResource UITab}">
                         <StackPanel Margin="10">
-                            <Label>Language:</Label>
+                            <Label Content="{DynamicResource Language}"/>
                             <ComboBox x:Name="eCB_Language"/>
-                            <Label>World Preview Size:</Label>
-                            <TextBox Text="64" />
                         </StackPanel>
                     </TabItem>
 
                     <!-- Вкладка Debug -->
-                    <TabItem Header="Debug">
+                    <TabItem Header="{DynamicResource DebugTab}">
                         <StackPanel Margin="10">
-                            <CheckBox x:Name="eCkB_TestMod" Content="Generator Test Mode" IsChecked="False" />
-                            <CheckBox x:Name="eCkB_WLights" Content="Do Write Lights" IsChecked="True" />
+                            <CheckBox x:Name="eCkB_TestMod" Content="{DynamicResource TestMod}" IsChecked="False" />
+                            <CheckBox x:Name="eCkB_WLights" Content="{DynamicResource do-write-lights}" IsChecked="True" />
                         </StackPanel>
                     </TabItem>
                     <!-- Вкладка Расширенные-->
-                    <TabItem Header="Расширенные">
+                    <TabItem Header="{DynamicResource ExtendedTab}">
 
                     </TabItem>
                 </TabControl>
-                <Button x:Name="eB_Save" Content="Save" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
+                <Button x:Name="eB_Save" Content="{DynamicResource Save}" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
                 <Button x:Name="eB_Close" Click="eB_Close_Click" Content="x" VerticalAlignment="Top" HorizontalAlignment="Right" Width="24"/>
             </Grid>
         </Grid>

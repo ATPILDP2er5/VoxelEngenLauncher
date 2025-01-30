@@ -7,7 +7,7 @@
         <ResourceDictionary>
             <!-- Ресурсы SharpVectors -->
             <ResourceDictionary.MergedDictionaries>
-               
+                <ResourceDictionary Source="/Resurces/Language/lang.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
