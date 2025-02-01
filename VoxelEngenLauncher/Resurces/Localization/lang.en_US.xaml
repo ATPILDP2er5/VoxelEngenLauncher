@@ -58,7 +58,7 @@
     <v:String x:Key="Play">Play</v:String>
     <v:String x:Key="Settings">Settings</v:String>
     <v:String x:Key="FolderGame">Open game folder</v:String>
-    <v:String x:Key="GeimerProfile">Game Profile</v:String>
+    <v:String x:Key="GeimerProfile">Profile</v:String>
     <v:String x:Key="AddForks">Add fork</v:String>
     <!--Кнопки-->
 

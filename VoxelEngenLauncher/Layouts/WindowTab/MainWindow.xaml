@@ -8,6 +8,7 @@
         xmlns:svg="http://sharpvectors.codeplex.com/svg/"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:cef="clr-namespace:CefSharp;assembly=CefSharp.Core"
         Title="VLauncher" Height="558" Width="958" MinHeight="555" MinWidth="955" Activated="Window_Activated" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <Grid Margin="10,10,0,10" Background="#4CF9F7F7" OpacityMask="White" HorizontalAlignment="Left" Width="260" >
@@ -19,7 +20,7 @@
             <Button x:Name="eB_GeimerProfile" Content="{DynamicResource GeimerProfile}" Height="42" HorizontalAlignment="Center" Margin="0,357,0,0" VerticalAlignment="Top" Width="240"/>
             <ProgressBar x:Name="nePB_DownloadElement" Height="15" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="240"/>
             <Button x:Name="eB_AddForkG" Content="{DynamicResource AddForks}" Click="eB_AddForkG_Click" Height="42" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240"/>
-            <Button Height="42" HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Width="47">
+            <Button x:Name="eB_DelitFork" Height="42" HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Width="47" IsEnabled="False" Click="eB_DelitFork_Click">
                 <Image Source="{svgc:SvgImage Source=/Resurces/Images/trash.svg}"/>
             </Button>
         </Grid>
@@ -159,20 +160,20 @@
                 <Button x:Name="eB_Save" Content="{DynamicResource Save}" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
                 <Button x:Name="eB_Close" Click="eB_Close_Click" Content="x" VerticalAlignment="Top" HorizontalAlignment="Right" Width="24"/>
             </Grid>
-            <!--Visibility="Hidden"-->
-            <Grid x:Name="ModGrid" >
+            <!---->
+            <Grid x:Name="ModGrid" Visibility="Hidden">
                 <Grid Background="#7FFFFFFF" HorizontalAlignment="Right" Width="226">
                     <TextBox x:Name="eEB_DirectoryName" Text="custom_version" HorizontalAlignment="Center" Margin="0,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="206"/>
                     <TextBlock Text="Имя кастомной версии" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
                     <TextBlock Text="Версия ядра" HorizontalAlignment="Left" Margin="10,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
                     <ComboBox x:Name="eCB_CoreVersionList" Height="21" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Width="206"/>
                     <Button x:Name="eB_CreatePork" Content="Создать" Height="20" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Width="47"/>
-                    <Button x:Name="eB_Cancel" Content="Отмена" Height="20" HorizontalAlignment="Right" Margin="0,0,62,35" VerticalAlignment="Bottom" Width="47"/>
-                    <ProgressBar x:Name="nePB_Compilate" Height="20" Margin="10,442,10,0" VerticalAlignment="Top"/>
-                    <Grid Background="#806F6868" Margin="10,86,10,80">
-                        <Label Content="Информация о модификации" Margin="0,0,0,347"/>
-                        <TextBlock Text="q" Height="324" Margin="0,29,0,0" VerticalAlignment="Top"/>
-                    </Grid>
+                    <ProgressBar x:Name="nePB_Compilate" Margin="10,0,10,60" Height="20" VerticalAlignment="Bottom"/>
+
+                    <Label Content="Информация о модификации" Margin="10,86,10,0" Height="31" VerticalAlignment="Top"/>
+                    <TextBlock Text="q" Margin="10,117,10,85" RenderTransformOrigin="0.5,0.5">
+                    </TextBlock>
+                    <Button Content="x" VerticalAlignment="Top" Margin="207,0,0,0" Click="Button_Click"/>
                 </Grid>
                 <Grid x:Name="GridListBox">
                     <ListBox x:Name="ModList" Background="#7FFFFFFF" Margin="0,0,233,0">
@@ -201,6 +202,7 @@
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
+
     </Grid>
     <Window.Resources>
 

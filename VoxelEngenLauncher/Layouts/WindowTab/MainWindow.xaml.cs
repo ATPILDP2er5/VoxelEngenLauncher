@@ -61,7 +61,7 @@ namespace VoxelEngenLauncher
                     eCB_LanguageApp.SelectedItem = "English";
                 }
 
-               
+
             }
 
         }
@@ -174,12 +174,15 @@ namespace VoxelEngenLauncher
             var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
             eB_Play.Content = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame)) ? "Играть" : "Установить";
             eB_Play.IsEnabled = true;
+            eB_DelitFork.IsEnabled = true;
             eB_FolderGame.IsEnabled = Directory.Exists(Path.GetDirectoryName(selectedVersion.PathGame));
         }
 
         private void eB_Settings_Click(object sender, RoutedEventArgs e)
         {
             LoadSettingsIntoGrid();
+            if (ModGrid.Visibility == Visibility.Visible)
+                ModGrid.Visibility = Visibility.Hidden;
             SettigsGrid.Visibility = Visibility.Visible;
         }
 
@@ -292,18 +295,6 @@ namespace VoxelEngenLauncher
                     MessageBox.Show($"Ошибка распаковки: {ioEx.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
-                // Удаление временного файла
-                try
-                {
-                    File.Delete(tempZipFile);
-                }
-                catch (IOException ioEx)
-                {
-                    MessageBox.Show($"Не удалось удалить временный файл: {ioEx.Message}", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-
-                // Уведомление об успешной установке
             }
             catch (Exception ex)
             {
@@ -448,11 +439,11 @@ namespace VoxelEngenLauncher
             var audio = new TomlTable
             {
                 ["enabled"] = ChB_Enable.IsChecked, // Если есть CheckBox для включения звука, добавьте его проверку
-                ["volume-master"] = eS_GlobalVolume.Value ,
-                ["volume-regular"] = eS_RegularVolume.Value ,
-                ["volume-ui"] = eS_UIVolume.Value ,
-                ["volume-ambient"] = eS_AmbientVolume.Value ,
-                ["volume-music"] = eS_MusicVolume.Value 
+                ["volume-master"] = eS_GlobalVolume.Value,
+                ["volume-regular"] = eS_RegularVolume.Value,
+                ["volume-ui"] = eS_UIVolume.Value,
+                ["volume-ambient"] = eS_AmbientVolume.Value,
+                ["volume-music"] = eS_MusicVolume.Value
             };
             tomlSettings["audio"] = audio;
 
@@ -541,14 +532,14 @@ namespace VoxelEngenLauncher
             // Очищаем старую локализацию и загружаем новую
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(newLang);
-            
+
         }
 
         private void eCB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
-            { 
-                ChangeLanguage(Languages[eCB_LanguageApp.SelectedIndex].Key); 
+            {
+                ChangeLanguage(Languages[eCB_LanguageApp.SelectedIndex].Key);
             }
             catch
             {
@@ -580,7 +571,26 @@ namespace VoxelEngenLauncher
 
         private void eB_AddForkG_Click(object sender, RoutedEventArgs e)
         {
+            if (SettigsGrid.Visibility == Visibility.Visible)
+                SettigsGrid.Visibility = Visibility.Hidden;
             ModGrid.Visibility = Visibility.Visible;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+            ModGrid.Visibility = Visibility.Hidden;
+        }
+
+        private void eB_DelitFork_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedVersion = App.VersionControl[eCB_ControlVershion.SelectedIndex];
+            if (selectedVersion.PathGame != null)
+            {
+                MessageBox.Show("Выбранный форк установлен локально. Вы хотите удалить её?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                return;
+            }
+
         }
     }
 }
