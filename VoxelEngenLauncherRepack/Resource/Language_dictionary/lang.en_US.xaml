@@ -1,0 +1,90 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:v="clr-namespace:System;assembly=mscorlib">
+    <v:String x:Key="AudioTab">Audio</v:String>
+    <!--Вкладка Звука-->
+        <v:String x:Key="GlobalVolume">Global volume</v:String>
+        <v:String x:Key="RegularVolume">Regular volume</v:String>
+        <v:String x:Key="MusicVolume">Music volume</v:String>
+        <v:String x:Key="UIVolume">UI volume</v:String>
+        <v:String x:Key="AmbientVolume">Ambient volume</v:String>
+    <!--Вкладка Звука-->
+    <v:String x:Key="DisplayTab">Display</v:String>
+    <!--Вкладка Отображения-->
+        <v:String x:Key="WithWindow">With</v:String>
+        <v:String x:Key="HeightWindow">Height</v:String>
+        <v:String x:Key="FPSLimit">FPS limit</v:String>
+        <v:String x:Key="WindowMod">Full Scrin</v:String>
+        <v:String x:Key="LimitFPSiconified">Limit FPS in iconified</v:String>
+    <!--Вкладка Отображения-->
+    <v:String x:Key="CameraTab">Camera</v:String>
+    <!--Вкладка Камера Игрока-->
+        <v:String x:Key="Sensitiv">Sensitiv</v:String>
+        <v:String x:Key="FOV">FOV</v:String>
+        <v:String x:Key="EnFOVEffects">FOV Effects</v:String>
+        <v:String x:Key="EnShake">Camera shake</v:String>
+        <v:String x:Key="EnableInertia">Enable Inertia</v:String>
+    <!--Вкладка Камера Игрока-->
+    <v:String x:Key="ChunksTab">Chunks</v:String>
+    <!--Настройка генерации чанков-->
+        <v:String x:Key="LoadDistance">Distance load</v:String>
+        <v:String x:Key="LoadSpead">Spead load</v:String>
+    <!--Настройка генерации чанков-->
+    <v:String x:Key="GraficsTab">Grafics</v:String>
+    <!--Настройка графики-->
+    <v:String x:Key="FOG">FOG</v:String>
+    <v:String x:Key="EnBlackLight">Black Light</v:String>
+    <v:String x:Key="Gamma">Gamma</v:String>
+    <v:String x:Key="EFC">Frustum culling</v:String>
+    <!--Настройка графики-->
+    <v:String x:Key="UITab">UI</v:String>
+    <!--Настройка интерфейса-->
+    <v:String x:Key="Language">Language</v:String>
+    <!--Настройка интерфейса-->
+    <v:String x:Key="DebugTab">Debug</v:String>
+    <!--Настройки для разработчика-->
+    <v:String x:Key="TestMod">Test mod</v:String>
+    <v:String x:Key="do-write-lights">do write lights</v:String>
+    <!--Настройки для разработчика-->
+    <v:String x:Key="ExtendedTab">Extended settings</v:String>
+    <!--Расширенные настройки-->
+    <!--Расширенные настройки-->
+    <v:String x:Key="ControlsTab">Controls</v:String>
+    <!--Настройки управления-->
+    <!--Настройки управления-->
+    
+    <!--Кнопки-->
+    <v:String x:Key="Save">Save</v:String>
+    <v:String x:Key="Play">Play</v:String>
+    <v:String x:Key="Settings">Settings</v:String>
+    <v:String x:Key="FolderGame">Open game folder</v:String>
+    <v:String x:Key="GeimerProfile">Profile</v:String>
+    <v:String x:Key="AddForks">Add fork</v:String>
+    <!--Кнопки-->
+    <!--Сообщения-->
+    <v:String x:Key="FindWindVersion">Downloading the latest available releases</v:String>
+    <!--Сообщения-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</ResourceDictionary>

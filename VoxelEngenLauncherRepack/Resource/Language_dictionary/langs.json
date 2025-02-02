@@ -1,0 +1,35 @@
+[
+    {
+        "key": "be_BY",
+        "name": "Беларуская"
+    },
+    {
+        "key": "de_DE",
+        "name": "Deutsch"
+    },
+    {
+        "key": "en_US",
+        "name": "English"
+    },
+    {
+        "key": "pl_PL",
+        "name": "Polski"
+    },
+    {
+        "key": "ru_RU",
+        "name": "Русский"
+    },
+    {
+        "key": "uk_UA",
+        "name": "Українська"
+    },
+    {
+        "key": "fi_FI",
+        "name": "Suomi"
+    },
+    {
+        "key": "uz_UZ",
+        "name": "O'zbekcha"
+    }
+]
+

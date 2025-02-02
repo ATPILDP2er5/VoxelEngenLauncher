@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resource\Image\AppImg\IconApp.ico</ApplicationIcon>
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resource\Image\SVG\icon.svg" />
+    <None Remove="Resource\Image\SVG\logo.svg" />
+    <None Remove="Resource\Image\SVG\trash.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resource\Image\AppImg\IconApp.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resource\User\Logs\" />
+    <Folder Include="Resource\Data\Mods\" />
+    <Folder Include="Resource\Data\Core\" />
+    <Folder Include="Resource\Data\Forks\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CefSharp.Common.NETCore" Version="132.3.11" />
+    <PackageReference Include="CefSharp.Wpf.NETCore" Version="132.3.11" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
+    <PackageReference Include="Tomlyn" Version="0.18.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resource\Image\SVG\icon.svg" />
+    <Resource Include="Resource\Image\SVG\logo.svg" />
+    <Resource Include="Resource\Image\SVG\trash.svg" />
+  </ItemGroup>
+
+</Project>

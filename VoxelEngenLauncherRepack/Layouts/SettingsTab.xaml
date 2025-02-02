@@ -1,0 +1,144 @@
+﻿<UserControl x:Class="VoxelEngenLauncherRepack.Layouts.SettingsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VoxelEngenLauncherRepack.Layouts"
+             mc:Ignorable="d" 
+             d:DesignHeight="560" d:DesignWidth="675">
+    <Grid>
+        <TabControl>
+            <!-- Вкладка Audio -->
+            <TabItem Header="{DynamicResource AudioTab}">
+                <StackPanel Margin="10">
+                    <CheckBox x:Name="ChB_Enable" Content="Enabled" IsChecked="True" />
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource GlobalVolume}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_GlobalVolume, StringFormat=\{0:P\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_GlobalVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource RegularVolume}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_RegularVolume, StringFormat=\{0:P\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_RegularVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource UIVolume}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_UIVolume, StringFormat=\{0:P\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_UIVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource AmbientVolume}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_AmbientVolume, StringFormat=\{0:P\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_AmbientVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource MusicVolume}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_MusicVolume, StringFormat=\{0:P\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_MusicVolume" Minimum="0" Maximum="1" TickFrequency="0.1" LargeChange="0.01" Cursor="Hand" Interval="1" />
+                </StackPanel>
+            </TabItem>
+
+            <!-- Вкладка Display -->
+            <TabItem Header="{DynamicResource DisplayTab}">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource WithWindow }"/>
+                        <TextBox x:Name="eETB_WidthWindow"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource HeightWindow}"/>
+                        <TextBox x:Name="eETB_HeightWindow"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource FPSLimit}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_FPS_Limit, StringFormat=\{0:F0\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_FPS_Limit" Minimum="-1" Maximum="120" />
+                    <CheckBox  x:Name="eCkB_WindowMod" Content="{DynamicResource WindowMod}" IsChecked="False" />
+                    <CheckBox  x:Name="eCkB_MinimFPSLimitet" Content="{DynamicResource LimitFPSiconified}" IsChecked="False" />
+                </StackPanel>
+            </TabItem>
+
+            <!-- Вкладка Camera -->
+            <TabItem Header="{DynamicResource CameraTab}">
+                <StackPanel Margin="10">
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource Sensitiv}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_Sensitiv, StringFormat=\{0:F\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_Sensitiv" Minimum="0" Maximum="10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource FOV}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eEB_FOV, StringFormat=\{0:F0\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eEB_FOV" Minimum="10" Maximum="120"/>
+                    <CheckBox x:Name="eCkB_EnableFOVEffects" Content="{DynamicResource EnFOVEffects}" IsChecked="True" />
+                    <CheckBox x:Name="eCkB_EnableShake" Content="{DynamicResource EnShake}" IsChecked="True" />
+                    <CheckBox x:Name="eChB_EnableInertia" Content="{DynamicResource EnableInertia}" IsChecked="True" />
+                </StackPanel>
+            </TabItem>
+
+            <!-- Вкладка Chunks -->
+            <TabItem Header="{DynamicResource ChunksTab}">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource LoadDistance}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_DistanceLoad, StringFormat=\{0:F0\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_DistanceLoad" Minimum="3" Maximum="80"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource LoadSpead}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_SpeadLoad, StringFormat=\{0:F0\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_SpeadLoad" Minimum="1" Maximum="32"/>
+                </StackPanel>
+            </TabItem>
+
+            <!-- Вкладка Graphics -->
+            <TabItem Header="{DynamicResource GraficsTab}">
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource FOG}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_Fog, StringFormat=\{0:F\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_Fog" Minimum="1" Maximum="6"/>
+                    <CheckBox x:Name="eChB_EnableBlacklight" Content="{DynamicResource EnBlackLight}" IsChecked="True" />
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{DynamicResource Gamma}"/>
+                        <TextBlock Text="{Binding Value, ElementName=eS_Gamma, StringFormat=\{0:F\}}"/>
+                    </StackPanel>
+                    <Slider x:Name="eS_Gamma" Minimum="0.4" Maximum="1"/>
+                    <CheckBox x:Name="eCH_EFC" Content="{DynamicResource EFC}" IsChecked="True" />
+                </StackPanel>
+            </TabItem>
+
+            <!-- Вкладка UI -->
+            <TabItem Header="{DynamicResource UITab}">
+                <StackPanel Margin="10">
+                    <Label Content="{DynamicResource Language}"/>
+                    <ComboBox x:Name="eCB_Language"/>
+                </StackPanel>
+            </TabItem>
+
+            <!-- Вкладка Debug -->
+            <TabItem Header="{DynamicResource DebugTab}">
+                <StackPanel Margin="10">
+                    <CheckBox x:Name="eCkB_TestMod" Content="{DynamicResource TestMod}" IsChecked="False" />
+                    <CheckBox x:Name="eCkB_WLights" Content="{DynamicResource do-write-lights}" IsChecked="True" />
+                </StackPanel>
+            </TabItem>
+            <!-- Вкладка Расширенные-->
+            <TabItem Header="{DynamicResource ExtendedTab}">
+                <StackPanel Margin="10">
+                    <Label Content="{DynamicResource Language}"/>
+                    <ComboBox x:Name="eCB_LanguageApp" SelectionChanged="eCB_Language_SelectionChanged"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <Button x:Name="eB_Save" Content="{DynamicResource Save}" Click="eB_Save_Click" Margin="0,0,10,10" HorizontalAlignment="Right" Width="72" Grid.ColumnSpan="2" Height="20" VerticalAlignment="Bottom"/>
+        <Button x:Name="eB_Close" Click="eB_Close_Click" Content="x" VerticalAlignment="Top" HorizontalAlignment="Right" Width="24"/>
+    </Grid>
+</UserControl>

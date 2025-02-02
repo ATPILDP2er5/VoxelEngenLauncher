@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128mm"
+   height="128mm"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="IconApp.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.44720819"
+     inkscape:cx="-44.7219"
+     inkscape:cy="259.38702"
+     inkscape:window-width="1366"
+     inkscape:window-height="697"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#4c9f1a;fill-opacity:0.716216;stroke-width:0.264583"
+       id="rect1"
+       width="128"
+       height="128"
+       x="0"
+       y="0"
+       ry="28.99004"
+       rx="48.513947" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:56.4444px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#7a65d4;fill-opacity:1;stroke-width:0.264583"
+       x="8.3372297"
+       y="63.212601"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#7a65d4;fill-opacity:1;stroke-width:0.264583"
+         x="8.3372297"
+         y="63.212601">VE</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:17.6389px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#c2c2c2;fill-opacity:1;stroke-width:0.264583"
+       x="23.665339"
+       y="78.687248"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="fill:#c2c2c2;fill-opacity:1;stroke-width:0.264583"
+         x="23.665339"
+         y="78.687248">LAUNCHER</tspan></text>
+  </g>
+</svg>

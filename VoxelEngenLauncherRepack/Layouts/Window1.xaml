@@ -1,0 +1,16 @@
+﻿<Window x:Class="VoxelEngenLauncherRepack.Layouts.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:svg="http://sharpvectors.codeplex.com/svg/"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+        xmlns:local="clr-namespace:VoxelEngenLauncherRepack.Layouts"
+        mc:Ignorable="d"
+        Title="Window1" Height="200" Width="450" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None">
+    <Grid>
+        <ProgressBar x:Name="neP_LoadingBar" Margin="0,0,0,0" Height="15" VerticalAlignment="Bottom"/>
+        <TextBlock x:Name="LoadingText" HorizontalAlignment="Left" Margin="19,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="160" Width="247"/>
+        <Image Margin="266,21,26,100" Source="{svgc:SvgImage Source=Resource/Image/SVG/logo.svg}"/>
+    </Grid>
+</Window>
