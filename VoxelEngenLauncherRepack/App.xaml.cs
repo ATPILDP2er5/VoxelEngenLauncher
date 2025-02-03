@@ -1,31 +1,24 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using System.Threading.Tasks;
 using VoxelEngenLauncherRepack.Layouts;
 
 namespace VoxelEngenLauncherRepack
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
+            var DEF = new DEFOLT_ZATICHKA();
+            var loadingWindow = new Window1();
 
-            Thread windowThread = new Thread(() =>
+            loadingWindow.ShowDialog();
+            var mainWindow = new MainWindow();
+            if (mainWindow.ShowDialog() == true)
             {
-                Window1 window = new Window1();
-                window.Closed += (s, e) => Application.Current.Dispatcher.InvokeShutdown();
-                window.Show();
-                System.Windows.Threading.Dispatcher.Run();
-            });
-
-            windowThread.SetApartmentState(ApartmentState.STA);
-            windowThread.Start();
-            windowThread.Join();
-
+            }
+            DEF.Close();
         }
     }
-
 }

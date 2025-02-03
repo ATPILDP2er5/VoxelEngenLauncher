@@ -7,6 +7,38 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid x:Name="ModGrid">
+            <Grid Background="#7FFFFFFF" HorizontalAlignment="Right" Width="226">
+                <TextBox x:Name="eEB_DirectoryName" Text="custom_version" HorizontalAlignment="Center" Margin="0,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="206"/>
+                <TextBlock Text="Имя кастомной версии" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <TextBlock Text="Версия ядра" HorizontalAlignment="Left" Margin="10,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <ComboBox x:Name="eCB_CoreVersionList" Height="21" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Width="206"/>
+                <Button x:Name="eB_CreatePork" Content="Создать" Height="20" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Width="47"/>
+                <ProgressBar x:Name="nePB_Compilate" Margin="10,0,10,60" Height="20" VerticalAlignment="Bottom"/>
+
+                <Label Content="Информация о модификации" Margin="10,86,10,0" Height="31" VerticalAlignment="Top"/>
+                <TextBlock Text="q" Margin="10,117,10,85" RenderTransformOrigin="0.5,0.5">
+                </TextBlock>
+                <Button Content="x" VerticalAlignment="Top" Margin="207,0,0,0" Click="Button_Click"/>
+            </Grid>
+            <Grid x:Name="GridListBox">
+                <ListBox x:Name="ModList" Background="#7FFFFFFF" Margin="0,0,233,0">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="#806F6868" Height="60" Tag="{Binding Description}" Width="{Binding ElementName=GridListBox, Path=Whidth}">
+                                <Image Source="{Binding IconMod}"/>
+                                <Label Content="{Binding NameMod}" Margin="72,0,-71,30"/>
+                                <Label Content="{Binding Creator}" Margin="72,30,-71,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

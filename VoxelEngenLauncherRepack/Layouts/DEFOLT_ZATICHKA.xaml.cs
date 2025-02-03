@@ -10,34 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace VoxelEngenLauncherRepack.Layouts
 {
     /// <summary>
-    /// Логика взаимодействия для SettingsTab.xaml
+    /// Логика взаимодействия для DEFOLT_ZATICHKA.xaml
     /// </summary>
-    public partial class SettingsTab : UserControl
+    public partial class DEFOLT_ZATICHKA : Window
     {
-        public SettingsTab()
+        public DEFOLT_ZATICHKA()
         {
             InitializeComponent();
-        }
-
-        private void eCB_LanguageApp_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void eB_Save_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void eB_Close_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

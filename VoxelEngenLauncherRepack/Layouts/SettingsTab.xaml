@@ -134,7 +134,7 @@
             <TabItem Header="{DynamicResource ExtendedTab}">
                 <StackPanel Margin="10">
                     <Label Content="{DynamicResource Language}"/>
-                    <ComboBox x:Name="eCB_LanguageApp" SelectionChanged="eCB_Language_SelectionChanged"/>
+                    <ComboBox x:Name="eCB_LanguageApp" SelectionChanged="eCB_LanguageApp_SelectionChanged"/>
                 </StackPanel>
             </TabItem>
         </TabControl>

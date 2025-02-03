@@ -9,7 +9,7 @@
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:cef="clr-namespace:CefSharp;assembly=CefSharp.Core"
         mc:Ignorable="d"
-        Title="VLauncher" Height="600" Width="960" MinHeight="555" MinWidth="955" Activated="Window_Activated" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="VLauncher" Height="600" Width="960" MinHeight="555" MinWidth="955" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <Grid>
             <Grid.Background>

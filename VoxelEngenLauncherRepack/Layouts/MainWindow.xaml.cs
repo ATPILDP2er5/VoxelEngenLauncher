@@ -22,14 +22,10 @@ namespace VoxelEngenLauncherRepack.Layouts
     {
         public MainWindow()
         {
-            List<String> Forks = new List<String>();
             InitializeComponent();
-            foreach(var v in StorageManager.LocalForks)
-            {
-                Forks.Add(v.Name);
-            }
-            eCB_ControlVershion.ItemsSource = Forks;
+
         }
+
 
         private void eB_AddForkG_Click(object sender, RoutedEventArgs e)
         {
@@ -62,6 +58,11 @@ namespace VoxelEngenLauncherRepack.Layouts
         }
 
         private void eCB_ControlVershion_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }
