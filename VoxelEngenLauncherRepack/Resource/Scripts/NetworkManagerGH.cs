@@ -18,6 +18,7 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         public static string RepoName { get; set; } = "VoxelEngine-Cpp";
 
 
+
         // 2. Заменено async void на async Task
         public static async Task GetReleasesAsync(
             ProgressBar progressBar,
@@ -143,10 +144,8 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         public static async Task DowloadRelease(GitHubRelease GHR, ProgressBar BG)
         {
             string fileName = $"voxelcore.{GHR.Name.Substring(1)}_win64.zip";
-            // Если передан путь, используем его, иначе сохраняем в стандартную папку
             string tempDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Core");
 
-            // Убедимся, что папка для временных файлов существует
             if (!Directory.Exists(tempDirectory))
             {
                 Directory.CreateDirectory(tempDirectory);
@@ -154,15 +153,20 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
 
             string tempZipFile = Path.Combine(tempDirectory, fileName);
 
+            // Проверяем, существует ли файл
+            if (File.Exists(tempZipFile))
+            {
+                Console.WriteLine($"Файл {fileName} уже существует. Пропускаем загрузку.");
+                return;
+            }
+
             try
             {
                 using HttpClient client = new HttpClient();
 
-                // Запрос на скачивание
                 using var response = await client.GetAsync(GHR.HtmlUrl, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
 
-                // Общий размер файла
                 long? totalBytes = response.Content.Headers.ContentLength;
 
                 if (totalBytes.HasValue)
@@ -174,7 +178,6 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
                     });
                 }
 
-                // Скачивание файла
                 using (var responseStream = await response.Content.ReadAsStreamAsync())
                 using (var fileStream = new FileStream(tempZipFile, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
@@ -209,6 +212,7 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
                 });
             }
         }
+
         public class GitHubRelease
         {
             public string Name { get; set; } = "Unnamed Release";

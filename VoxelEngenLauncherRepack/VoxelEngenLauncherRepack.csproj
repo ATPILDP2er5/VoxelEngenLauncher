@@ -14,10 +14,28 @@
     <None Remove="Resource\Image\SVG\icon.svg" />
     <None Remove="Resource\Image\SVG\logo.svg" />
     <None Remove="Resource\Image\SVG\trash.svg" />
+    <None Remove="Resource\Language_dictionary\langs.json" />
+    <None Remove="Resource\User\Default\controls.toml" />
+    <None Remove="Resource\User\Default\settings.toml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resource\User\Default\settings_app.toml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resource\Image\AppImg\IconApp.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resource\User\Default\controls.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\User\Default\settings.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +58,18 @@
     <Resource Include="Resource\Image\SVG\icon.svg" />
     <Resource Include="Resource\Image\SVG\logo.svg" />
     <Resource Include="Resource\Image\SVG\trash.svg" />
+    <Content Include="Resource\Language_dictionary\langs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Resource\Language_dictionary\lang.en_US.xaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Page>
+    <Page Update="Resource\Language_dictionary\lang.ru_RU.xaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Page>
   </ItemGroup>
 
 </Project>
