@@ -25,13 +25,23 @@
                 <Image x:Name="neIB_LogoGame" Height="70" HorizontalAlignment="Left" Margin="33,10,0,0" Source="{svgc:SvgImage Source=/Resource/Image/SVG/logo.svg}" VerticalAlignment="Top" Width="199"/>
                 <ComboBox x:Name="eCB_ControlVershion" HorizontalAlignment="Center" Margin="0,98,0,0" SelectionChanged="eCB_ControlVershion_SelectionChanged" VerticalAlignment="Top" Width="240"/>
                 <Button x:Name="eB_GeimerProfile" Content="{DynamicResource GeimerProfile}" Height="42" HorizontalAlignment="Center" Margin="0,357,0,0" VerticalAlignment="Top" Width="240" Click="eB_GeimerProfile_Click"/>
-                <ProgressBar x:Name="nePB_DownloadElement" Height="15" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="240"/>
                 <Button x:Name="eB_AddForkG" Content="{DynamicResource AddForks}" Click="eB_AddForkG_Click" Height="42" HorizontalAlignment="Center" Margin="0,143,0,0" VerticalAlignment="Top" Width="240"/>
                 <Button x:Name="eB_DelitFork" Height="42" HorizontalAlignment="Left" Margin="203,190,0,0" VerticalAlignment="Top" Width="47" IsEnabled="False" Click="eB_DelitFork_Click">
                     <Image Source="{svgc:SvgImage Source=/Resource/Image/SVG/trash.svg}"/>
                 </Button>
             </Grid>
-            <ContentControl x:Name="ContentHost" Margin="275,10,10,10" Height="560"/>
+            <Grid Margin="275,10,10,10">
+                <Grid x:Name="SettingTab" Visibility="Hidden">
+                    <local:SettingsTab/>
+                </Grid>
+                <Grid x:Name="ProfileTab" Visibility="Hidden">
+                    <local:BrowserTab/>
+                </Grid>
+                <Grid x:Name="CreateForkTab" Visibility="Hidden">
+                    <local:CreateForkTab/>
+                </Grid>
+                <Button x:Name="CloseGSD" Content="X" Background="#FFC10000" Height="26" VerticalAlignment="Top" Click="CloseGSD_Click" HorizontalAlignment="Right" Width="40"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

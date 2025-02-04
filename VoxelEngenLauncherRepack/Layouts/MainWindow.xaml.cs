@@ -29,7 +29,9 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void eB_AddForkG_Click(object sender, RoutedEventArgs e)
         {
-
+            CreateForkTab.Visibility = Visibility.Visible;
+            ProfileTab.Visibility = Visibility.Hidden;
+            SettingTab.Visibility = Visibility.Hidden;
         }
 
         private void eB_Play_Click(object sender, RoutedEventArgs e)
@@ -44,7 +46,9 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void eB_Settings_Click(object sender, RoutedEventArgs e)
         {
-
+            CreateForkTab.Visibility = Visibility.Hidden;
+            ProfileTab.Visibility = Visibility.Hidden;
+            SettingTab.Visibility = Visibility.Visible;
         }
 
         private void eB_FolderGame_Click(object sender, RoutedEventArgs e)
@@ -54,7 +58,9 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void eB_GeimerProfile_Click(object sender, RoutedEventArgs e)
         {
-
+            CreateForkTab.Visibility = Visibility.Hidden;
+            ProfileTab.Visibility = Visibility.Visible;
+            SettingTab.Visibility = Visibility.Hidden;
         }
 
         private void eCB_ControlVershion_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -65,6 +71,13 @@ namespace VoxelEngenLauncherRepack.Layouts
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
+        }
+
+        private void CloseGSD_Click(object sender, RoutedEventArgs e)
+        {
+            CreateForkTab.Visibility = Visibility.Hidden;
+            ProfileTab.Visibility = Visibility.Hidden;
+            SettingTab.Visibility = Visibility.Hidden;
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace VoxelEngenLauncherRepack.Resource.Scripts
@@ -14,7 +16,7 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
 
         public static string RepoOwner { get; set; } = "MihailRis";
         public static string RepoName { get; set; } = "VoxelEngine-Cpp";
-        public static List<GitHubRelease> Releases { get; } = new List<GitHubRelease>();
+
 
         // 2. Заменено async void на async Task
         public static async Task GetReleasesAsync(
@@ -45,14 +47,14 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
                     {
                         string versionTag = release.Name?.TrimStart('v') ?? string.Empty;
                         string fileName = $"voxelcore.{versionTag}_win64.zip";
-                        string fileUrl = $"https://github.com/{RepoOwner}/{RepoName}/releases/download/{release.TagName}/{fileName}";
+                        string fileUrl = $"https://github.com/{RepoOwner}/{RepoName}/releases/download/{release.Name}/{fileName}";
 
                         if (await CheckFileExistsAsync(fileUrl, token))
                         {
                             await _releasesLock.WaitAsync(token);
                             try
                             {
-                                Releases.Add(new GitHubRelease
+                                App.Releases.Add(new GitHubRelease
                                 {
                                     Name = release.Name ?? "Unnamed Release",
                                     PublishedAt = release.PublishedAt,
@@ -94,13 +96,18 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
             try
             {
                 using HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", "C# App");
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
                 client.Timeout = TimeSpan.FromSeconds(30);
 
                 using var response = await client.GetAsync(url, token);
-                response.EnsureSuccessStatusCode();
+                Console.WriteLine($"Fetching releases from: {url}");
+                Console.WriteLine($"Response Status: {response.StatusCode}");
 
+                response.EnsureSuccessStatusCode();
                 string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"Response Body: {jsonResponse}");
+
                 return JsonSerializer.Deserialize<List<GitHubRelease>>(
                     jsonResponse,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
@@ -133,7 +140,75 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
                 return false;
             }
         }
+        public static async Task DowloadRelease(GitHubRelease GHR, ProgressBar BG)
+        {
+            string fileName = $"voxelcore.{GHR.Name.Substring(1)}_win64.zip";
+            // Если передан путь, используем его, иначе сохраняем в стандартную папку
+            string tempDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Core");
 
+            // Убедимся, что папка для временных файлов существует
+            if (!Directory.Exists(tempDirectory))
+            {
+                Directory.CreateDirectory(tempDirectory);
+            }
+
+            string tempZipFile = Path.Combine(tempDirectory, fileName);
+
+            try
+            {
+                using HttpClient client = new HttpClient();
+
+                // Запрос на скачивание
+                using var response = await client.GetAsync(GHR.HtmlUrl, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                // Общий размер файла
+                long? totalBytes = response.Content.Headers.ContentLength;
+
+                if (totalBytes.HasValue)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        BG.Maximum = totalBytes.Value;
+                        BG.Value = 0;
+                    });
+                }
+
+                // Скачивание файла
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
+                using (var fileStream = new FileStream(tempZipFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    long totalRead = 0;
+
+                    while ((bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        await fileStream.WriteAsync(buffer, 0, bytesRead);
+                        totalRead += bytesRead;
+
+                        if (totalBytes.HasValue)
+                        {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                BG.Value = totalRead;
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    BG.Value = 0;
+                });
+            }
+        }
         public class GitHubRelease
         {
             public string Name { get; set; } = "Unnamed Release";

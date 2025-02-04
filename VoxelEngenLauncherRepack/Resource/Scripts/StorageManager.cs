@@ -1,5 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
+using System.IO.Compression;
+using System.Security.AccessControl;
+using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json;
 
@@ -120,6 +124,63 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         {
             await UpdateProgressBarAsync(bar, 0, 0);
         }
+
+        public static async Task ExtractCoreFromZIPAsync(string Version, string CustomName)
+        {
+            string fileName = $"voxelcore.{Version.Substring(1)}_win64.zip";
+            string tempDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Core");
+            string forkDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Forks", Version, CustomName);
+
+            if (!Directory.Exists(forkDirectory))
+            {
+                Directory.CreateDirectory(forkDirectory);
+            }
+
+            // Распаковка архива
+            try
+            {
+                await Task.Run(() => ZipFile.ExtractToDirectory(Path.Combine(tempDirectory, fileName), forkDirectory, overwriteFiles: true));
+            }
+            catch (IOException ioEx)
+            {
+                MessageBox.Show($"Ошибка распаковки: {ioEx.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            finally
+            {
+                MessageBox.Show("Ядро форка успешно распаковано.", "Успехъ", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        public static async Task ExtractModsFromZIPAsync(string FinalPath, List<String> MODS)
+        {
+            string startDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Mods");
+            string finalDirectory = Path.Combine(FinalPath, "content");
+            foreach (string PMD in MODS)
+            {
+                string MSD = Path.Combine(startDirectory, PMD);
+
+                if (!Directory.Exists(finalDirectory))
+                {
+                    Directory.CreateDirectory(finalDirectory);
+                }
+
+                // Распаковка архива
+                try
+                {
+                    await Task.Run(() => ZipFile.ExtractToDirectory(Path.Combine(startDirectory, PMD), finalDirectory, overwriteFiles: true));
+                }
+                catch (IOException ioEx)
+                {
+                    MessageBox.Show($"Ошибка распаковки: {ioEx.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+            }
+             
+            MessageBox.Show("Data-паки успешно мигрированы в форк.", "Успехъ", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+        }
+
 
         // 3. Публичное свойство с потокобезопасным доступом
         public static List<Forks> LocalForks => _localForks.ToList();
