@@ -189,9 +189,15 @@ namespace VoxelEngenLauncherRepack.Layouts
         private void eCB_LanguageApp_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string langFile = $"Resource/Language_dictionary/lang.{Languages[eCB_LanguageApp.SelectedIndex].Key}.xaml";
-
-            ResourceDictionary newLang = new ResourceDictionary { Source = new Uri(langFile, UriKind.Relative) };
-
+            ResourceDictionary newLang;
+            try
+            {
+                newLang = new ResourceDictionary { Source = new Uri(langFile, UriKind.Relative) };
+            }
+            catch
+            {
+                newLang = new ResourceDictionary { Source = new Uri("Resource/Language_dictionary/lang.en_US.xaml", UriKind.Relative) };
+            }
             // Очищаем старую локализацию и загружаем новую
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(newLang);

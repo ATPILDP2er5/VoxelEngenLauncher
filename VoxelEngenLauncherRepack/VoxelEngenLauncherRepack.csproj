@@ -15,11 +15,19 @@
     <None Remove="Resource\Image\SVG\logo.svg" />
     <None Remove="Resource\Image\SVG\trash.svg" />
     <None Remove="Resource\Language_dictionary\langs.json" />
+    <None Remove="Resource\Scripts\index.html" />
+    <None Remove="Resource\Scripts\UserDir\EULA.html" />
     <None Remove="Resource\User\Default\controls.toml" />
     <None Remove="Resource\User\Default\settings.toml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resource\Scripts\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resource\Scripts\UserDir\EULA.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resource\User\Default\settings_app.toml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -48,6 +56,7 @@
   <ItemGroup>
     <PackageReference Include="CefSharp.Common.NETCore" Version="132.3.11" />
     <PackageReference Include="CefSharp.Wpf.NETCore" Version="132.3.11" />
+    <PackageReference Include="chromiumembeddedframework.runtime" Version="132.3.1" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
