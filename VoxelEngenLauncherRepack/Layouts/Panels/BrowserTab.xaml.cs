@@ -34,11 +34,12 @@ namespace VoxelEngenLauncherRepack.Layouts
             string logsPath = AppDomain.CurrentDomain.BaseDirectory + "Resource\\User\\Logs\\";
             string htmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Scripts", "index.html");
 
-            if (!File.Exists(htmlPath) || !File.Exists(logsPath) || !File.Exists(cachePath))
+            if (!File.Exists(htmlPath) || !Directory.Exists(logsPath) || !Directory.Exists(cachePath))
             {
-                System.Windows.MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+               
                 Directory.CreateDirectory(logsPath);
                 Directory.CreateDirectory(cachePath);
+                System.Windows.MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             var settings = new CefSettings
             {
@@ -86,7 +87,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Error preparing download: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"{System.Windows.Application.Current.TryFindResource("DownloadEror") as string}: {ex.Message}",$"{System.Windows.Application.Current.TryFindResource("Error") as string}", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
@@ -95,12 +96,9 @@ namespace VoxelEngenLauncherRepack.Layouts
         {
             if (downloadItem.IsComplete)
             {
-                System.Windows.MessageBox.Show($"File {downloadItem.SuggestedFileName} downloaded successfully!", "Download Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                System.Windows.MessageBox.Show($"{System.Windows.Application.Current.TryFindResource("DownloadSucA") as string} {downloadItem.SuggestedFileName} {System.Windows.Application.Current.TryFindResource("DownloadSucC") as string}", $"{System.Windows.Application.Current.TryFindResource("Succes") as string}", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            else if (downloadItem.IsCancelled)
-            {
-                System.Windows.MessageBox.Show($"Download of {downloadItem.SuggestedFileName} failed!", "Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            
         }
         private string GetDownloadFolder(string url)
         {

@@ -91,7 +91,7 @@ namespace VoxelEngenLauncherRepack.Layouts
                 }
                 else
                 {
-                    MessageBox.Show("Файл настроек отсутствует и не найден стандартный!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"{Application.Current.TryFindResource("ErrorNotFoundSet") as string}", $"{Application.Current.TryFindResource("Error") as string}", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }

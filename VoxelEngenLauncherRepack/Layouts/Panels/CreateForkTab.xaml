@@ -10,14 +10,14 @@
         <Grid x:Name="ModGrid">
             <Grid Background="#7FFFFFFF" HorizontalAlignment="Right" Width="226">
                 <TextBox x:Name="eEB_DirectoryName" Text="custom_version" HorizontalAlignment="Center" Margin="0,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="206"/>
-                <TextBlock Text="Имя кастомной версии" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <TextBlock Text="Версия ядра" HorizontalAlignment="Left" Margin="10,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <TextBlock Text="{DynamicResource NameFork}" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <TextBlock Text="{DynamicResource CoreVersion}" HorizontalAlignment="Left" Margin="10,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
                 <ComboBox x:Name="eCB_CoreVersionList" Height="21" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Width="206"/>
                 <Button x:Name="eB_CreatePork" Content="Создать" Height="20" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Width="142" Click="eB_CreatePork_Click"/>
                 <ProgressBar x:Name="nePB_Compilate" Margin="0,440,0,0" Height="10" VerticalAlignment="Top"/>
 
-                <Label Content="Информация о модификации" Margin="10,86,10,0" Height="31" VerticalAlignment="Top"/>
-                <TextBlock Text="q" Margin="10,117,10,85" RenderTransformOrigin="0.5,0.5">
+                <Label Content="{DynamicResource InformationDescript}" Margin="10,86,10,0" Height="31" VerticalAlignment="Top"/>
+                <TextBlock Margin="10,117,10,85" RenderTransformOrigin="0.5,0.5">
                 </TextBlock>
                 <Button Content="x" VerticalAlignment="Top" Margin="207,0,0,0" Click="Button_Click"/>
             </Grid>

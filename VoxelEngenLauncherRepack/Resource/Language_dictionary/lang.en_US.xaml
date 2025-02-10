@@ -64,27 +64,8 @@
     <!--Сообщения-->
     <v:String x:Key="FindWindVersion">Downloading the latest available releases</v:String>
     <!--Сообщения-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</ResourceDictionary>
+    <!--Создание Форка (Панель)-->
+    <v:String x:Key="NameFork">Fork Name</v:String>
+    <v:String x:Key="CoreVersion">Core Version</v:String>
+    <v:String x:Key="InformationDescript">Modification Information</v:String>
+    </ResourceDictionary>

@@ -58,7 +58,21 @@
     <v:String x:Key="GeimerProfile">Профиль</v:String>
     <v:String x:Key="AddForks">Добавить форк</v:String>
     <!-- Кнопки -->
+    <!--Создание Форка (Панель)-->
+    <v:String x:Key="NameFork">Название форка</v:String>
+    <v:String x:Key="CoreVersion">Версия ядра</v:String>
+    <v:String x:Key="InformationDescript">Информация о модификации</v:String>
+    <!--Вкладка с браузером (Код)-->
+    <v:String x:Key="DownloadEror">Ошибка скачивания файла</v:String>
+    <v:String x:Key="DownloadSucC">упсешно скачен</v:String>
+    <v:String x:Key="DownloadSucA">Файл</v:String>
+    <!--Вкладка настроек-->
+    <v:String x:Key="ErrorNotFoundSet">Файл настроек отсутствует и не найден стандартный!</v:String>
+    <!--Стандартные-->
+    <v:String x:Key="Succes">Успех</v:String>
+    <v:String x:Key="Error">Ошибка</v:String>
 </ResourceDictionary>
+
 
 
 

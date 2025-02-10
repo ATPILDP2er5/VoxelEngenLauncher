@@ -164,16 +164,9 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
                     Directory.CreateDirectory(finalDirectory);
                 }
 
-                // Распаковка архива
-                try
-                {
-                    await Task.Run(() => ZipFile.ExtractToDirectory(Path.Combine(startDirectory, PMD), finalDirectory, overwriteFiles: true));
-                }
-                catch (IOException ioEx)
-                {
-                    MessageBox.Show($"Ошибка распаковки: {ioEx.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+
+                await Task.Run(() => ZipFile.ExtractToDirectory(Path.Combine(startDirectory, PMD), finalDirectory, overwriteFiles: true));
+
 
             }
              
