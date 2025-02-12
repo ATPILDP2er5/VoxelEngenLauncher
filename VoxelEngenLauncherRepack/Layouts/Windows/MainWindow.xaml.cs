@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using VoxelEngenLauncher.Resurces.Skripts;
 using VoxelEngenLauncherRepack.Resource.Scripts;
 
 namespace VoxelEngenLauncherRepack.Layouts
@@ -22,21 +23,21 @@ namespace VoxelEngenLauncherRepack.Layouts
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static List<string[]> listForks = [];
-        public static List<string> ForksName = [];
-        public static string GameDirPath;
+        public static List<string[]> listForks = new List<string[]>();
+        public static List<string> ForksName = new List<string>();
+        public static string GameDirPath = string.Empty;
         public MainWindow()
         {
             InitializeComponent();
             listForks = GetForksList();
-            foreach(var t in listForks)
+            foreach (var t in listForks)
             {
                 ForksName.Add($"({t[0]}) - {t[1]}");
             }
-            eCB_ControlVershion.ItemsSource = ForksName;
+            eCB_ControlVersion.ItemsSource = ForksName;
 
         }
-        static bool StartExternalApp(string appPath)
+        static async Task<bool> StartExternalApp(string appPath)
         {
             if (string.IsNullOrWhiteSpace(appPath))
             {
@@ -50,22 +51,51 @@ namespace VoxelEngenLauncherRepack.Layouts
                 return false;
             }
 
+            string WorkingDirectoryQQ = System.IO.Path.GetDirectoryName(appPath);
+            if (WorkingDirectoryQQ == null)
+            {
+                Console.WriteLine("Ошибка: не удалось определить рабочую директорию.");
+                return false;
+            }
+
             try
             {
+                // Пути к файлам настроек
+                string appSettingsPath = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Resource\\User\\Settings",
+                    "SettingsGame.toml"
+                );
+                string gameSettingsPath = System.IO.Path.Combine(WorkingDirectoryQQ, "settings.toml");
 
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                // Копирование глобальных настроек в папку игры
+                if (File.Exists(appSettingsPath))
                 {
-                    FileName = appPath,
-                    WorkingDirectory = System.IO.Path.GetDirectoryName(appPath),
-                    UseShellExecute = true
-                };
+                    File.Copy(appSettingsPath, gameSettingsPath, overwrite: true);
+                }
 
-                Process.Start(startInfo);
+                // Запуск игры и ожидание завершеия
+                Process gameProcess = new()
+                {
+                    StartInfo =
+                    {
+                        FileName = appPath,
+                        UseShellExecute = true,
+                        WorkingDirectory = System.IO.Path.GetDirectoryName(appPath)
+                    }
+                };
+                gameProcess.Start();
+                await gameProcess.WaitForExitAsync(); // Асинхронное ожидание
+
+                    // Обновление глобальных настроек
+                    SettingsManager.UpdateGlobalSettings(gameSettingsPath);
+                
+
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при запуске: {ex.Message}");
+                Console.WriteLine($"Ошибка: {ex.Message}");
                 return false;
             }
         }
@@ -86,7 +116,7 @@ namespace VoxelEngenLauncherRepack.Layouts
                 foreach (var childDir in Directory.GetDirectories(parentDir))
                 {
                     string childName = new DirectoryInfo(childDir).Name;
-                    forksList.Add(new string[] { parentName, childName , Directory.GetDirectories(childDir)[0] });
+                    forksList.Add(new string[] { parentName, childName, Directory.GetDirectories(childDir)[0] });
                 }
             }
 
@@ -100,16 +130,17 @@ namespace VoxelEngenLauncherRepack.Layouts
             SettingTab.Visibility = Visibility.Hidden;
         }
 
-        private void eB_Play_Click(object sender, RoutedEventArgs e)
+        private async void eB_Play_Click(object sender, RoutedEventArgs e)
         {
-            if (!StartExternalApp(GameDirPath))
+            if (!await StartExternalApp(GameDirPath))
                 Console.WriteLine("Ошибка: не удалось запустить приложение.");
-
         }
 
         private void eB_DelitFork_Click(object sender, RoutedEventArgs e)
         {
-
+            if(MessageBox.Show("Вы точно Хотите удалить форк?", null, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+            }
         }
 
         private void eB_Settings_Click(object sender, RoutedEventArgs e)
@@ -121,13 +152,13 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void eB_FolderGame_Click(object sender, RoutedEventArgs e)
         {
-            if (eCB_ControlVershion.SelectedIndex == -1)
+            if (eCB_ControlVersion.SelectedIndex == -1)
             {
                 MessageBox.Show("Пожалуйста, выберите версию игры.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var selectedVersion = listForks[eCB_ControlVershion.SelectedIndex][2];
+            var selectedVersion = listForks[eCB_ControlVersion.SelectedIndex][2];
             if (System.IO.Path.Exists(selectedVersion))
             {
                 Process.Start("explorer.exe", selectedVersion);
@@ -145,11 +176,11 @@ namespace VoxelEngenLauncherRepack.Layouts
             SettingTab.Visibility = Visibility.Hidden;
         }
 
-        private void eCB_ControlVershion_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void eCB_ControlVersion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GameDirPath = System.IO.Path.Combine(listForks[eCB_ControlVershion.SelectedIndex][2], "VoxelCore.exe");
+            GameDirPath = System.IO.Path.Combine(listForks[eCB_ControlVersion.SelectedIndex][2], "VoxelCore.exe");
             if (!File.Exists(GameDirPath))
-                listForks.RemoveAt(eCB_ControlVershion.SelectedIndex);
+                listForks.RemoveAt(eCB_ControlVersion.SelectedIndex);
             else
             {
                 eB_FolderGame.IsEnabled = true;

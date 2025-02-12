@@ -45,6 +45,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             await NetworkManagerGH.DowloadRelease(App.Releases[eCB_CoreVersionList.SelectedIndex], nePB_Compilate);
             await StorageManager.ExtractCoreFromZIPAsync(App.Releases[eCB_CoreVersionList.SelectedIndex].Name, eEB_DirectoryName.Text ?? "ORIG");
             string forkDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Forks", App.Releases[eCB_CoreVersionList.SelectedIndex].Name, eEB_DirectoryName.Text ?? "ORIG");
+
         }
     }
 }

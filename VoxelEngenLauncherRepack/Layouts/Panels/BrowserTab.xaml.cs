@@ -1,170 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using CefSharp;
-using CefSharp.Wpf;
 
 namespace VoxelEngenLauncherRepack.Layouts
 {
-    /// <summary>
-    /// Логика взаимодействия для BrowserTab.xaml
-    /// </summary>
-    public partial class BrowserTab : System.Windows.Controls.UserControl
+    public partial class BrowserTab : UserControl
     {
+        private static readonly string AcceptSite = "https://voxelworld.ru/";
+        private string _htmlPath;
+
         public BrowserTab()
         {
-            string cachePath = AppDomain.CurrentDomain.BaseDirectory + "Resource\\Data\\Chache\\";
-            string logsPath = AppDomain.CurrentDomain.BaseDirectory + "Resource\\User\\Logs\\";
-            string htmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Scripts", "index.html");
+            InitializeComponent();
+            InitializeWebView2Async();
+        }
 
-            if (!File.Exists(htmlPath) || !Directory.Exists(logsPath) || !Directory.Exists(cachePath))
+        private async void InitializeWebView2Async()
+        {
+            string cachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Chache");
+            string logsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "User", "Logs");
+            _htmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Scripts", "index.html");
+
+            // Проверка и создание директорий
+            if (!File.Exists(_htmlPath) || !Directory.Exists(logsPath) || !Directory.Exists(cachePath))
             {
-               
                 Directory.CreateDirectory(logsPath);
                 Directory.CreateDirectory(cachePath);
-                System.Windows.MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
-            var settings = new CefSettings
-            {
-                CachePath = cachePath,
-                LogFile = logsPath
-            };
-            Cef.Initialize(settings);
-            InitializeComponent();
-            string fileUrl = new Uri(htmlPath).AbsoluteUri;
-            CrmBrowse.DownloadHandler = new CDH();
-            CrmBrowse.RequestHandler = new BOL();
-            CrmBrowse.Load(fileUrl);
-        }
-
-    }
-    public class CDH : IDownloadHandler
-    {
-        public static string AcseptSite = "https://voxelworld.ru/";
-        public bool CanDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, string url, string requestMethod)
-        {
-            return url.StartsWith(AcseptSite);
-        }
-
-        public bool OnBeforeDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IBeforeDownloadCallback callback)
-        {
-            if (callback.IsDisposed) return false;
-
-            string downloadPath = GetDownloadFolder(downloadItem.Url);
 
             try
             {
-                if (!Directory.Exists(downloadPath))
-                    Directory.CreateDirectory(downloadPath);
+                var environment = await CoreWebView2Environment.CreateAsync(
+                    browserExecutableFolder: null,
+                    userDataFolder: cachePath,
+                    options: new CoreWebView2EnvironmentOptions()
+                    {
+                        AdditionalBrowserArguments = $"--log-file={Path.Combine(logsPath, "webview2.log")}"
+                    });
 
-                string fullPath = System.IO.Path.Combine(downloadPath, downloadItem.SuggestedFileName);
+                await WebView2Control.EnsureCoreWebView2Async(environment);
 
-                if (File.Exists(fullPath))
-                {
-                    System.Windows.MessageBox.Show("File already exists!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return false;
-                }
+                // Настройка обработчиков
+                WebView2Control.CoreWebView2.NavigationStarting += OnNavigationStarting;
+                WebView2Control.CoreWebView2.DownloadStarting += OnDownloadStarting;
 
-                callback.Continue(fullPath, showDialog: true);
-                return true;
+                // Загрузка локального HTML
+                WebView2Control.Source = new Uri(_htmlPath);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"{System.Windows.Application.Current.TryFindResource("DownloadEror") as string}: {ex.Message}",$"{System.Windows.Application.Current.TryFindResource("Error") as string}", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
+                MessageBox.Show($"WebView2 initialization failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        public void OnDownloadUpdated(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IDownloadItemCallback callback)
+        private void OnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
-            if (downloadItem.IsComplete)
+            // Обработка tg:// ссылок
+            if (e.Uri.StartsWith("tg://", StringComparison.OrdinalIgnoreCase))
             {
-                System.Windows.MessageBox.Show($"{System.Windows.Application.Current.TryFindResource("DownloadSucA") as string} {downloadItem.SuggestedFileName} {System.Windows.Application.Current.TryFindResource("DownloadSucC") as string}", $"{System.Windows.Application.Current.TryFindResource("Succes") as string}", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            
-        }
-        private string GetDownloadFolder(string url)
-        {
-            if (url.Contains(AcseptSite))
-            {
-                return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Mods");
-            }
-
-            return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Downloads", "Other");
-        }
-    }
-    public class BOL : IRequestHandler
-    {
-        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
-        {
-            return false;
-        }
-
-        public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
-        {
-            return null;
-        }
-
-        public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
-        {
-            // Если URL начинается с tg://, открываем его через системный вызов и отменяем навигацию в CefSharp
-            if (request.Url.StartsWith("tg://", StringComparison.OrdinalIgnoreCase))
-            {
+                e.Cancel = true;
                 try
                 {
-                    Process.Start(new ProcessStartInfo(request.Url) { UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo(e.Uri) { UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show($"Ошибка при открытии ссылки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при открытии ссылки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                return true; // Отменяем дальнейшую обработку этого URL в CefSharp
             }
-            return false; // Для остальных URL продолжаем нормальную обработку
         }
 
-        public bool OnCertificateError(IWebBrowser chromiumWebBrowser, IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback)
+        private void OnDownloadStarting(object sender, CoreWebView2DownloadStartingEventArgs e)
         {
-            return false;
+            string downloadUrl = e.DownloadOperation.Uri;
+            if (!downloadUrl.StartsWith(AcceptSite))
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            string downloadPath = GetDownloadFolder(downloadUrl);
+            string fullPath = Path.Combine(downloadPath, e.ResultFilePath);
+
+            if (File.Exists(fullPath))
+            {
+                MessageBox.Show("File already exists!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                e.Cancel = true;
+                return;
+            }
+
+            e.ResultFilePath = fullPath;
+            e.Handled = true;
+
+            e.DownloadOperation.StateChanged += (s, args) =>
+            {
+                if (e.DownloadOperation.State == CoreWebView2DownloadState.Completed)
+                {
+                    MessageBox.Show($"{Application.Current.TryFindResource("DownloadSucA")} {e.ResultFilePath} {Application.Current.TryFindResource("DownloadSucC")}",
+                                  $"{Application.Current.TryFindResource("Succes")}",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            };
         }
 
-        public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
+        private string GetDownloadFolder(string url)
         {
-        }
-
-        public bool OnOpenUrlFromTab(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture)
-        {
-            return false;
-        }
-
-        public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status, int errorCode, string errorMessage)
-        {
-        }
-
-        public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, IBrowser browser)
-        {
-        }
-
-        public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback)
-        {
-            return false;
+            return url.Contains(AcceptSite)
+                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Mods")
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Downloads", "Other");
         }
     }
 }

@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Properties\" />
     <Folder Include="Resource\User\Logs\" />
     <Folder Include="Resource\Data\Mods\" />
     <Folder Include="Resource\Data\Core\" />
@@ -54,10 +55,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.Common.NETCore" Version="132.3.11" />
-    <PackageReference Include="CefSharp.Wpf.NETCore" Version="132.3.11" />
-    <PackageReference Include="chromiumembeddedframework.runtime" Version="132.3.1" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3065.39" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
     <PackageReference Include="Tomlyn" Version="0.18.0" />
