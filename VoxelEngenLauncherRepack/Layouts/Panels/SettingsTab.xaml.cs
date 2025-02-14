@@ -29,6 +29,8 @@ namespace VoxelEngenLauncherRepack.Layouts
         public static ClassLang[] Languages;
         public SettingsTab()
         {
+            string userDataPath = GetUserDataPath();
+            Directory.CreateDirectory(System.IO.Path.Combine(userDataPath, "Settings"));
             InitializeComponent();
             var JSONLanguages = File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource\\Language_dictionary\\langs.json"));
             Languages = JsonConvert.DeserializeObject<ClassLang[]>(JSONLanguages);
@@ -53,6 +55,13 @@ namespace VoxelEngenLauncherRepack.Layouts
             }
             LoadSettingsIntoGrid();
         }
+        private static string GetUserDataPath()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string vlePath = System.IO.Path.Combine(appDataPath, "VLE", "UserData");
+            Directory.CreateDirectory(vlePath); // Создаёт папку, если её нет
+            return vlePath;
+        }
         public class ClassLang
         {
             [JsonProperty("key")]
@@ -65,7 +74,7 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void LoadSettingsIntoGrid()
         {
-            string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource\\User\\Settings\\SettingsGame.toml");
+            string settingsPath = System.IO.Path.Combine(GetUserDataPath(), "SettingsGame.toml");
             string defaultSettingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource\\User\\Default\\settings.toml");
 
             // Проверяем и создаем директории, если их нет
@@ -289,9 +298,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             // Сохраняем в файл settings.toml
             try
             {
-                string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource\\User\\Settings\\SettingsGame.toml");
-                File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource\\Data\\GlobalSettings.toml"));
-                var tomlMain = Toml.FromModel(tomlSettings);
+                string settingsPath = System.IO.Path.Combine(GetUserDataPath(), "SettingsGame.toml"); var tomlMain = Toml.FromModel(tomlSettings);
                 File.WriteAllText(settingsPath, tomlMain);
                 MessageBox.Show("Настройки успешно сохранены.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }

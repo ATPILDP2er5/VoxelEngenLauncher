@@ -36,7 +36,9 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         {
             try
             {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource/Data/Forks");
+                string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string path = System.IO.Path.Combine(appData, "VEL", "Resource", "Data", "Forks");
+                //string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource/Data/Forks");
                 if (!Directory.Exists(path)) return;
 
                 var versions = Directory.GetDirectories(path).ToList();
@@ -128,8 +130,10 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         public static async Task ExtractCoreFromZIPAsync(string Version, string CustomName)
         {
             string fileName = $"voxelcore.{Version.Substring(1)}_win64.zip";
-            string tempDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Core");
-            string forkDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Forks", Version, CustomName);
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            string tempDirectory = Path.Combine(appData, "VEL", "Resource", "Data", "Core");
+            string forkDirectory = Path.Combine(appData, "VEL", "Resource", "Data", "Forks", Version, CustomName);
 
             if (!Directory.Exists(forkDirectory))
             {
@@ -153,7 +157,9 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         }
         public static async Task ExtractModsFromZIPAsync(string FinalPath, List<String> MODS)
         {
-            string startDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Mods");
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string startDirectory = System.IO.Path.Combine(appData, "VEL", "Resource", "Data", "Mods");
+            //string startDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Mods");
             string finalDirectory = Path.Combine(FinalPath, "content");
             foreach (string PMD in MODS)
             {

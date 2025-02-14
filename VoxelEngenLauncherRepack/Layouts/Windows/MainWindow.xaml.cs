@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -101,7 +102,9 @@ namespace VoxelEngenLauncherRepack.Layouts
         }
         static List<string[]> GetForksList()
         {
-            string basePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Forks");
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            string basePath = System.IO.Path.Combine(appData,"VEL", "Resource", "Data", "Forks");
             List<string[]> forksList = new List<string[]>();
 
             if (!Directory.Exists(basePath))
@@ -140,6 +143,7 @@ namespace VoxelEngenLauncherRepack.Layouts
         {
             if(MessageBox.Show("Вы точно Хотите удалить форк?", null, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
+                Directory.Delete(System.IO.Path.GetDirectoryName(GameDirPath), true);
             }
         }
 

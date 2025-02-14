@@ -144,8 +144,9 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         public static async Task DowloadRelease(GitHubRelease GHR, ProgressBar BG)
         {
             string fileName = $"voxelcore.{GHR.Name.Substring(1)}_win64.zip";
-            string tempDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Core");
-
+           //string tempDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Core");
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string tempDirectory = System.IO.Path.Combine(appData, "VEL", "Resource", "Data", "Core");
             if (!Directory.Exists(tempDirectory))
             {
                 Directory.CreateDirectory(tempDirectory);

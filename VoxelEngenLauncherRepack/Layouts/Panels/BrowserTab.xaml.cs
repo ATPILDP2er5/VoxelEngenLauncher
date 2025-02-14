@@ -3,6 +3,7 @@ using Microsoft.Web.WebView2.Wpf;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,19 +22,19 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private async void InitializeWebView2Async()
         {
-            string cachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Chache");
-            string logsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "User", "Logs");
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string cachePath = Path.Combine(localAppData, "VEL", "Resource", "Data", "WebView2Cache");
             _htmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Scripts", "index.html");
+            string logsPath = Path.Combine(localAppData, "VEL", "Resource", "Data", "Logs");
 
             // Проверка и создание директорий
-            if (!File.Exists(_htmlPath) || !Directory.Exists(logsPath) || !Directory.Exists(cachePath))
+            if (!File.Exists(_htmlPath) || !Directory.Exists(localAppData) || !Directory.Exists(cachePath))
             {
-                Directory.CreateDirectory(logsPath);
+                Directory.CreateDirectory(localAppData);
                 Directory.CreateDirectory(cachePath);
                 MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
             try
             {
                 var environment = await CoreWebView2Environment.CreateAsync(
@@ -46,11 +47,7 @@ namespace VoxelEngenLauncherRepack.Layouts
 
                 await WebView2Control.EnsureCoreWebView2Async(environment);
 
-                // Настройка обработчиков
-                WebView2Control.CoreWebView2.NavigationStarting += OnNavigationStarting;
-                WebView2Control.CoreWebView2.DownloadStarting += OnDownloadStarting;
-
-                // Загрузка локального HTML
+                // Навигация
                 WebView2Control.Source = new Uri(_htmlPath);
             }
             catch (Exception ex)
@@ -111,9 +108,11 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private string GetDownloadFolder(string url)
         {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
             return url.Contains(AcceptSite)
-                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Mods")
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Downloads", "Other");
+                ? Path.Combine(appData,"VLE", "Resource", "Data", "Mods")
+                : Path.Combine(appData, "VLE", "Downloads", "Other");
         }
     }
 }

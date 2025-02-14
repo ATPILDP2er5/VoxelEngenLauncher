@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
@@ -44,8 +45,19 @@ namespace VoxelEngenLauncherRepack.Layouts
         {
             await NetworkManagerGH.DowloadRelease(App.Releases[eCB_CoreVersionList.SelectedIndex], nePB_Compilate);
             await StorageManager.ExtractCoreFromZIPAsync(App.Releases[eCB_CoreVersionList.SelectedIndex].Name, eEB_DirectoryName.Text ?? "ORIG");
-            string forkDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Data", "Forks", App.Releases[eCB_CoreVersionList.SelectedIndex].Name, eEB_DirectoryName.Text ?? "ORIG");
 
+            // Новый путь к форкам в AppData
+            string forkDirectory = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "VEL",
+                "Resource",
+                "Data",
+                "Forks",
+                App.Releases[eCB_CoreVersionList.SelectedIndex].Name,
+                eEB_DirectoryName.Text ?? "ORIG"
+            );
+
+            Directory.CreateDirectory(forkDirectory); // Создать папку, если её нет
         }
     }
 }
