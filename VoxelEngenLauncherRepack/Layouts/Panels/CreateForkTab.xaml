@@ -19,7 +19,6 @@
                 <Label Content="{DynamicResource InformationDescript}" Margin="10,86,10,0" Height="31" VerticalAlignment="Top"/>
                 <TextBlock Margin="10,117,10,85" RenderTransformOrigin="0.5,0.5">
                 </TextBlock>
-                <Button Content="x" VerticalAlignment="Top" Margin="207,0,0,0" Click="Button_Click"/>
             </Grid>
             <Grid x:Name="GridListBox">
                 <ListBox x:Name="ModList" Background="#7FFFFFFF" Margin="0,0,233,0">

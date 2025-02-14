@@ -19,7 +19,7 @@ using VoxelEngenLauncherRepack.Resource.Scripts;
 namespace VoxelEngenLauncherRepack.Layouts
 {
     
-    /// <summary>
+    ///<summary>
     /// Логика взаимодействия для CreateForkTab.xaml
     /// </summary>
     public partial class CreateForkTab : UserControl
@@ -58,6 +58,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             );
 
             Directory.CreateDirectory(forkDirectory); // Создать папку, если её нет
+            
         }
     }
 }

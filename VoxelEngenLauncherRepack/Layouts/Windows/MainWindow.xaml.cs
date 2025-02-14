@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -25,18 +26,26 @@ namespace VoxelEngenLauncherRepack.Layouts
     public partial class MainWindow : Window
     {
         public static List<string[]> listForks = new List<string[]>();
-        public static List<string> ForksName = new List<string>();
+        public ObservableCollection<string> ForksName { get; set; } = new ObservableCollection<string>();
         public static string GameDirPath = string.Empty;
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = this; // Установка DataContext для привязки
+            UpdateInfo(); // Первоначальная загрузка данных
+        }
+        // Обновите метод UpdateInfo():
+        public void UpdateInfo()
+        {
             listForks = GetForksList();
+            ForksName.Clear();
             foreach (var t in listForks)
             {
                 ForksName.Add($"({t[0]}) - {t[1]}");
             }
-            eCB_ControlVersion.ItemsSource = ForksName;
-
+            // Уберите ручное обновление ItemsSource:
+            // eCB_ControlVersion.ItemsSource = null;
+            // eCB_ControlVersion.ItemsSource = ForksName;
         }
         static async Task<bool> StartExternalApp(string appPath)
         {
@@ -103,8 +112,7 @@ namespace VoxelEngenLauncherRepack.Layouts
         static List<string[]> GetForksList()
         {
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-            string basePath = System.IO.Path.Combine(appData,"VEL", "Resource", "Data", "Forks");
+            string basePath = System.IO.Path.Combine(appData, "VEL", "Resource", "Data", "Forks");
             List<string[]> forksList = new List<string[]>();
 
             if (!Directory.Exists(basePath))
@@ -119,7 +127,11 @@ namespace VoxelEngenLauncherRepack.Layouts
                 foreach (var childDir in Directory.GetDirectories(parentDir))
                 {
                     string childName = new DirectoryInfo(childDir).Name;
-                    forksList.Add(new string[] { parentName, childName, Directory.GetDirectories(childDir)[0] });
+                    var subDirs = Directory.GetDirectories(childDir);
+                    if (subDirs.Length > 0)
+                    {
+                        forksList.Add(new string[] { parentName, childName, subDirs[0] });
+                    }
                 }
             }
 
@@ -145,6 +157,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             {
                 Directory.Delete(System.IO.Path.GetDirectoryName(GameDirPath), true);
             }
+            UpdateInfo();
         }
 
         private void eB_Settings_Click(object sender, RoutedEventArgs e)
@@ -182,9 +195,24 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void eCB_ControlVersion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GameDirPath = System.IO.Path.Combine(listForks[eCB_ControlVersion.SelectedIndex][2], "VoxelCore.exe");
+            // Проверка на допустимый индекс
+            if (eCB_ControlVersion.SelectedIndex < 0 || eCB_ControlVersion.SelectedIndex >= listForks.Count)
+            {
+                eCB_ControlVersion.SelectedIndex = -1; // Сбросить выбор
+                return;
+            }
+
+            // Обновление информации только если индекс валиден
+            var selectedFork = listForks[eCB_ControlVersion.SelectedIndex];
+            GameDirPath = System.IO.Path.Combine(selectedFork[2], "VoxelCore.exe");
+
             if (!File.Exists(GameDirPath))
+            {
                 listForks.RemoveAt(eCB_ControlVersion.SelectedIndex);
+                ForksName.RemoveAt(eCB_ControlVersion.SelectedIndex);
+                UpdateInfo(); // Обновить данные
+                MessageBox.Show("Форк удален, так как файл не найден.");
+            }
             else
             {
                 eB_FolderGame.IsEnabled = true;
@@ -203,6 +231,10 @@ namespace VoxelEngenLauncherRepack.Layouts
             CreateForkTab.Visibility = Visibility.Hidden;
             ProfileTab.Visibility = Visibility.Hidden;
             SettingTab.Visibility = Visibility.Hidden;
+        }
+        private void eCB_ControlVersion_DropDownOpened(object sender, EventArgs e)
+        {
+            UpdateInfo(); // Обновляем список при открытии ComboBox
         }
     }
 }
