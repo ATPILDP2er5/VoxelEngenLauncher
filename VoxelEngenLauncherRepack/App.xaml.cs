@@ -20,6 +20,7 @@ namespace VoxelEngenLauncherRepack
             if (mainWindow.ShowDialog() == true)
             {
             }
+
             DEF.Close();
         }
     }

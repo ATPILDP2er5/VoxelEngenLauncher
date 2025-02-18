@@ -221,5 +221,6 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
             public DateTime? PublishedAt { get; set; }
             public string HtmlUrl { get; set; } = string.Empty;
         }
+
     }
 }

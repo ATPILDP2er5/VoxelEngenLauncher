@@ -143,6 +143,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             CreateForkTab.Visibility = Visibility.Visible;
             ProfileTab.Visibility = Visibility.Hidden;
             SettingTab.Visibility = Visibility.Hidden;
+            CloseGSD.Visibility = Visibility.Visible;
         }
 
         private async void eB_Play_Click(object sender, RoutedEventArgs e)
@@ -165,6 +166,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             CreateForkTab.Visibility = Visibility.Hidden;
             ProfileTab.Visibility = Visibility.Hidden;
             SettingTab.Visibility = Visibility.Visible;
+            CloseGSD.Visibility = Visibility.Visible;
         }
 
         private void eB_FolderGame_Click(object sender, RoutedEventArgs e)
@@ -191,6 +193,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             CreateForkTab.Visibility = Visibility.Hidden;
             ProfileTab.Visibility = Visibility.Visible;
             SettingTab.Visibility = Visibility.Hidden;
+            CloseGSD.Visibility = Visibility.Visible;
         }
 
         private void eCB_ControlVersion_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -223,6 +226,8 @@ namespace VoxelEngenLauncherRepack.Layouts
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string basePath = System.IO.Path.Combine(appData, "VEL", "Resource", "Data", "Forks");
 
         }
 
@@ -231,6 +236,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             CreateForkTab.Visibility = Visibility.Hidden;
             ProfileTab.Visibility = Visibility.Hidden;
             SettingTab.Visibility = Visibility.Hidden;
+            CloseGSD.Visibility = Visibility.Hidden;
         }
         private void eCB_ControlVersion_DropDownOpened(object sender, EventArgs e)
         {

@@ -6,6 +6,7 @@ using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json;
+using static VoxelEngenLauncherRepack.Resource.Scripts.NetworkManagerGH;
 
 namespace VoxelEngenLauncherRepack.Resource.Scripts
 {
@@ -28,7 +29,6 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
         {
             await LoadLocalForksAsync(bar, token);
         }
-
         public static async Task LoadLocalForksAsync(
             ProgressBar bar,
             CancellationToken token,
@@ -183,5 +183,67 @@ namespace VoxelEngenLauncherRepack.Resource.Scripts
 
         // 3. Публичное свойство с потокобезопасным доступом
         public static List<Forks> LocalForks => _localForks.ToList();
+    }
+public class GitHubRelease
+    {
+        public string Name { get; set; }
+        public string TagName { get; set; }
+        public string Body { get; set; }
+        // Добавьте другие необходимые свойства
+    }
+
+    public class DataManager
+    {
+        private static readonly string AppDataPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "VEL",
+            "Cache",
+            "AppCN"
+        );
+
+        private static readonly string ReleasesFilePath = Path.Combine(AppDataPath, "releases.json");
+
+        // Сохранение списка релизов
+        public void SaveReleasesInfo(List<GitHubRelease> cache)
+        {
+            try
+            {
+                Directory.CreateDirectory(AppDataPath); // Создаст папку, если её нет
+
+                var settings = new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore
+                };
+
+                string json = JsonConvert.SerializeObject(cache, settings);
+                File.WriteAllText(ReleasesFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                // Обработка ошибок записи
+                Console.WriteLine($"Ошибка сохранения: {ex.Message}");
+            }
+        }
+
+        // Загрузка списка релизов
+        public List<GitHubRelease> LoadReleasesInfo()
+        {
+            try
+            {
+                if (!File.Exists(ReleasesFilePath))
+                    return new List<GitHubRelease>();
+
+                string json = File.ReadAllText(ReleasesFilePath);
+                return JsonConvert.DeserializeObject<List<GitHubRelease>>(json)
+                       ?? new List<GitHubRelease>();
+            }
+            catch (Exception ex)
+            {
+                // Обработка ошибок чтения
+                Console.WriteLine($"Ошибка загрузки: {ex.Message}");
+                return new List<GitHubRelease>();
+            }
+        }
     }
 }

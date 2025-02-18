@@ -17,24 +17,26 @@ namespace VoxelEngenLauncherRepack.Layouts
         public BrowserTab()
         {
             InitializeComponent();
-            InitializeWebView2Async();
+            _htmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Scripts", "index.html");
+            if (!File.Exists(_htmlPath))
+            {
+                MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            InitializeWebView2Async(_htmlPath, WebView2Control);
         }
 
-        private async void InitializeWebView2Async()
+        public static async void InitializeWebView2Async(string addres, object trigger, string? EndPath = "VEL\\Download")
         {
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string cachePath = Path.Combine(localAppData, "VEL", "Resource", "Data", "WebView2Cache");
-            _htmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resource", "Scripts", "index.html");
             string logsPath = Path.Combine(localAppData, "VEL", "Resource", "Data", "Logs");
+            string downloadPath = Path.Combine(localAppData, EndPath); // Папка для загрузок
 
             // Проверка и создание директорий
-            if (!File.Exists(_htmlPath) || !Directory.Exists(localAppData) || !Directory.Exists(cachePath))
-            {
-                Directory.CreateDirectory(localAppData);
-                Directory.CreateDirectory(cachePath);
-                MessageBox.Show("HTML file not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            Directory.CreateDirectory(cachePath);
+            Directory.CreateDirectory(logsPath);
+            Directory.CreateDirectory(downloadPath);
+
             try
             {
                 var environment = await CoreWebView2Environment.CreateAsync(
@@ -45,16 +47,27 @@ namespace VoxelEngenLauncherRepack.Layouts
                         AdditionalBrowserArguments = $"--log-file={Path.Combine(logsPath, "webview2.log")}"
                     });
 
-                await WebView2Control.EnsureCoreWebView2Async(environment);
+                var webView = trigger as WebView2;
+                await webView.EnsureCoreWebView2Async(environment);
+
+                // Установка пути загрузки файлов
+                webView.CoreWebView2.DownloadStarting += (sender, args) =>
+                {
+                    string fileName = Path.GetFileName(args.ResultFilePath);
+                    string newFilePath = Path.Combine(downloadPath, fileName);
+                    args.ResultFilePath = newFilePath; // Подтверждаем, что путь обработан вручную
+                };
 
                 // Навигация
-                WebView2Control.Source = new Uri(_htmlPath);
+                webView.Source = new Uri(addres);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"WebView2 initialization failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
 
         private void OnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
@@ -111,7 +124,7 @@ namespace VoxelEngenLauncherRepack.Layouts
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             return url.Contains(AcceptSite)
-                ? Path.Combine(appData,"VLE", "Resource", "Data", "Mods")
+                ? Path.Combine(appData, "VLE", "Resource", "Data", "Mods")
                 : Path.Combine(appData, "VLE", "Downloads", "Other");
         }
     }

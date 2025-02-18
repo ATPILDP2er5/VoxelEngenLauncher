@@ -58,7 +58,7 @@ namespace VoxelEngenLauncherRepack.Layouts
         private static string GetUserDataPath()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string vlePath = System.IO.Path.Combine(appDataPath, "VLE", "UserData");
+            string vlePath = System.IO.Path.Combine(appDataPath, "VEL", "UserCash");
             Directory.CreateDirectory(vlePath); // Создаёт папку, если её нет
             return vlePath;
         }

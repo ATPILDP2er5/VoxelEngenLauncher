@@ -34,6 +34,7 @@ namespace VoxelEngenLauncherRepack.Layouts
                 VersionCorses.Add(iten.Name);
             }
             eCB_CoreVersionList.ItemsSource = VersionCorses;
+            BrowserTab.InitializeWebView2Async("https://voxelworld.ru/", VW_Site, "VEL\\Resource\\Data\\DownloadResource");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
